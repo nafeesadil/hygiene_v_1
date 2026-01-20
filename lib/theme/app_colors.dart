@@ -6,7 +6,7 @@ class AppColors {
   static const Color lightSecondary = Color(0xFF5BC980);
   static const Color lightAccent = Color(0xFF3FB6E0);
 
-  static const Color lightBackground = Color.fromARGB(255, 213, 220, 192);
+  static const Color lightBackground = Color.fromARGB(255, 214, 221, 195);
   static const Color lightSurface = Color(0xFFFFFFFF);
 
   static const Color lightTextPrimary = Color.fromARGB(255, 19, 25, 31);

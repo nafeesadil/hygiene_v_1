@@ -5,12 +5,30 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Home'),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 25.0,
+                vertical: 20,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    'My ',
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                  Text('Home', style: TextStyle(fontSize: 28)),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-      body: const Center(child: Text('This is the Home Page')),
     );
   }
 }

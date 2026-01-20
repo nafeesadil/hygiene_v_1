@@ -16,7 +16,6 @@ class VendorShell extends StatefulWidget {
 class _VendorShellState extends State<VendorShell> {
   int _currentIndex = 0;
 
-  // If your page widgets are NOT const-constructible, remove the const keyword here.
   static const List<Widget> _pages = <Widget>[
     HomePage(),
     TasksPage(),
@@ -26,31 +25,56 @@ class _VendorShellState extends State<VendorShell> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: Container(
-        color: Colors.black,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-          child: GNav(
-            selectedIndex: _currentIndex,
-            onTabChange: (index) {
-              setState(() => _currentIndex = index);
-            },
-            gap: 8,
-            backgroundColor: Colors.black,
-            activeColor: const Color.fromARGB(255, 157, 236, 170),
-            iconSize: 24,
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            duration: const Duration(milliseconds: 300),
-            tabBackgroundColor: Colors.grey,
-            color: Colors.white,
-            tabs: const [
-              GButton(icon: Icons.home, text: 'Home'),
-              GButton(icon: Icons.task, text: 'Tasks'),
-              GButton(icon: Icons.qr_code, text: 'QR'),
-              GButton(icon: Icons.person, text: 'Profile'),
-            ],
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor, // surface color
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 20,
+              color: theme.scaffoldBackgroundColor.withValues(alpha: 0.3),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Container(
+            color: theme.scaffoldBackgroundColor, // surface color
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              child: GNav(
+                selectedIndex: _currentIndex,
+                onTabChange: (index) {
+                  setState(() => _currentIndex = index);
+                },
+                gap: 8,
+
+                rippleColor: const Color(0xACA1BC98),
+                backgroundColor: theme.scaffoldBackgroundColor,
+                color: theme.textTheme.bodyMedium?.color, // inactive icon/text
+                activeColor:
+                    theme.textTheme.bodyLarge?.color, // active icon/text
+                iconSize: 24,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                duration: const Duration(milliseconds: 250),
+                tabBackgroundColor: colorScheme.secondary.withValues(
+                  alpha: 0.60,
+                ),
+                // subtle highlight
+                tabs: const [
+                  GButton(icon: Icons.home_outlined, text: 'Home'),
+                  GButton(icon: Icons.task_outlined, text: 'Tasks'),
+                  GButton(icon: Icons.qr_code_outlined, text: 'QR'),
+                  GButton(icon: Icons.person_outline_outlined, text: 'Profile'),
+                ],
+              ),
+            ),
           ),
         ),
       ),

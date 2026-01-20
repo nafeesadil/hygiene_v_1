@@ -5,13 +5,14 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: Container(
         width: 300,
         padding: EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 181, 122, 252),
+          color: const Color.fromARGB(255, 17, 140, 74),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -26,7 +27,7 @@ class TaskCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: theme.textTheme.bodyLarge?.color,
                   ),
                 ),
                 SizedBox(height: 10),
@@ -48,7 +49,7 @@ class TaskCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: theme.textTheme.bodyLarge?.color,
                       ),
                     ),
                     Text(
@@ -56,7 +57,7 @@ class TaskCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: theme.textTheme.bodyLarge?.color,
                       ),
                     ),
                   ],

@@ -15,10 +15,14 @@ class _TasksPageState extends State<TasksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: true,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 25.0,
+                vertical: 20,
+              ),
               child: Row(
                 children: [
                   Text(
@@ -30,7 +34,7 @@ class _TasksPageState extends State<TasksPage> {
               ),
             ),
 
-            SizedBox(height: 25),
+            SizedBox(height: 10),
             // ignore: sized_box_for_whitespace
             Container(
               height: 200,
@@ -46,7 +50,12 @@ class _TasksPageState extends State<TasksPage> {
             SmoothPageIndicator(
               controller: _controller,
               count: 3,
-              effect: ExpandingDotsEffect(activeDotColor: Colors.grey.shade800),
+              effect: ExpandingDotsEffect(
+                activeDotColor: Colors.grey.shade800,
+                dotColor: Colors.grey.shade400,
+                dotHeight: 8,
+                dotWidth: 8,
+              ),
             ),
 
             SizedBox(height: 25),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "133140867893",
+    "project_id": "hygia-9f3bd",
+    "storage_bucket": "hygia-9f3bd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133140867893:android:fc88e7873e9607b31a3a7c",
+        "android_client_info": {
+          "package_name": "com.example.hygiene_v_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2o605hih93uxgrEjBDMSmUAoQJa7VBKI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

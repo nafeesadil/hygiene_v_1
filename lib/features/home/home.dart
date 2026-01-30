@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -23,6 +24,15 @@ class HomePage extends StatelessWidget {
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   Text('Home', style: TextStyle(fontSize: 28)),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await FirebaseFirestore.instance.collection('test').add({
+                        'createdAt': FieldValue.serverTimestamp(),
+                        'msg': 'hello from hygia',
+                      });
+                    },
+                    child: const Text('Test Firestore Write'),
+                  ),
                 ],
               ),
             ),

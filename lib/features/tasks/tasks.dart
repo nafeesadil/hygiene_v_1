@@ -64,21 +64,33 @@ class _TasksPageState extends State<TasksPage> {
               children: [
                 ListTile(
                   leading: Icon(
-                    Icons.child_friendly_rounded,
+                    Icons.health_and_safety,
                     color: const Color.fromARGB(255, 144, 151, 144),
                   ),
-                  title: Text('Task 1'),
+                  title: Text('Wash hands'),
                 ),
                 ListTile(
-                  leading: Icon(Icons.check_box, color: Colors.green),
-                  title: Text('Task 2'),
+                  leading: Icon(Icons.tap_and_play, color: Colors.green),
+                  title: Text('Clean surfaces'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.wash_sharp, color: Colors.grey),
+                  title: Text('wash utensils'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.delete, color: Colors.red),
+                  title: Text('Dispose waste'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.cleaning_services, color: Colors.blue),
+                  title: Text('Sanitize area'),
                 ),
                 ListTile(
                   leading: Icon(
-                    Icons.check_box_outline_blank,
-                    color: Colors.grey,
+                    Icons.report_gmailerrorred,
+                    color: Colors.orange,
                   ),
-                  title: Text('Task 3'),
+                  title: Text('Report issues'),
                 ),
               ],
             ),

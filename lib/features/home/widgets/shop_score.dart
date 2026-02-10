@@ -21,6 +21,7 @@ class HygieneScoreSummary extends StatelessWidget {
     final theme = Theme.of(context);
     final gaugePercent = todayPercent.clamp(0, 100).toDouble();
     final scorePercent = overallPercent.clamp(0, 100).toDouble();
+    final scoreText = scorePercent.toStringAsFixed(0);
 
     return InkWell(
       borderRadius: BorderRadius.circular(16),
@@ -56,7 +57,7 @@ class HygieneScoreSummary extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '${scorePercent.toStringAsFixed(0)}',
+                      scoreText,
                       style: theme.textTheme.headlineLarge?.copyWith(
                         fontWeight: FontWeight.w900,
                         height: 1.0,
@@ -98,18 +99,18 @@ class _ScoreBadge extends StatelessWidget {
     if (p >= 75) {
       icon = Icons.sentiment_very_satisfied_rounded;
       label = 'Good';
-      bg = Colors.green.withValues(alpha: 0.12);
-      fg = Colors.green;
+      bg = Colors.green.shade500.withValues(alpha: 0.12);
+      fg = Colors.green.shade700;
     } else if (p >= 50) {
       icon = Icons.sentiment_satisfied_rounded;
       label = 'OK';
-      bg = Colors.amber.withValues(alpha: 0.14);
-      fg = Colors.amber[800] ?? Colors.amber;
+      bg = Colors.amber.shade500.withValues(alpha: 0.14);
+      fg = Colors.amber.shade800;
     } else {
       icon = Icons.sentiment_dissatisfied_rounded;
       label = 'Low';
-      bg = Colors.red.withValues(alpha: 0.12);
-      fg = Colors.red;
+      bg = Colors.red.shade500.withValues(alpha: 0.12);
+      fg = Colors.red.shade700;
     }
 
     return Container(

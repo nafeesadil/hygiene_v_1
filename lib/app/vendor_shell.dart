@@ -3,7 +3,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 
 import '../features/home/home.dart';
 import '../features/profile/profile.dart';
-import '../features/tasks/tasks.dart';
+import '../features/tasks/presentation/pages/tasks.dart';
 import '../features/qr/qr.dart';
 
 class VendorShell extends StatefulWidget {

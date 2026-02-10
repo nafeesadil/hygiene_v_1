@@ -33,6 +33,11 @@ dependencies:
   
   shared_preferences: ^2.2.3
   syncfusion_flutter_gauges: ^32.1.25
+  drift: ^2.31.0
+  drift_flutter: ^0.2.7
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.1.4
+  path: ^1.9.0
 
   firebase_core: 
   cloud_firestore:
@@ -48,6 +53,8 @@ dev_dependencies:
     sdk: flutter
   flutter_launcher_icons: "^0.14.4"
   flutter_lints: ^6.0.0
+  drift_dev: ^2.31.0
+  build_runner: ^2.4.11
 
 flutter_launcher_icons:
   android: "launcher_icon"

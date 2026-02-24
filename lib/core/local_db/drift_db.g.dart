@@ -713,16 +713,271 @@ class TaskLogsCompanion extends UpdateCompanion<TaskLog> {
   }
 }
 
+class $ShopStateTable extends ShopState
+    with TableInfo<$ShopStateTable, ShopStateData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ShopStateTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isOpenMeta = const VerificationMeta('isOpen');
+  @override
+  late final GeneratedColumn<bool> isOpen = GeneratedColumn<bool>(
+    'is_open',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_open" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _openedAtMsMeta = const VerificationMeta(
+    'openedAtMs',
+  );
+  @override
+  late final GeneratedColumn<int> openedAtMs = GeneratedColumn<int>(
+    'opened_at_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, isOpen, openedAtMs];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'shop_state';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ShopStateData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('is_open')) {
+      context.handle(
+        _isOpenMeta,
+        isOpen.isAcceptableOrUnknown(data['is_open']!, _isOpenMeta),
+      );
+    }
+    if (data.containsKey('opened_at_ms')) {
+      context.handle(
+        _openedAtMsMeta,
+        openedAtMs.isAcceptableOrUnknown(
+          data['opened_at_ms']!,
+          _openedAtMsMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ShopStateData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ShopStateData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      isOpen: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_open'],
+      )!,
+      openedAtMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}opened_at_ms'],
+      )!,
+    );
+  }
+
+  @override
+  $ShopStateTable createAlias(String alias) {
+    return $ShopStateTable(attachedDatabase, alias);
+  }
+}
+
+class ShopStateData extends DataClass implements Insertable<ShopStateData> {
+  final int id;
+  final bool isOpen;
+  final int openedAtMs;
+  const ShopStateData({
+    required this.id,
+    required this.isOpen,
+    required this.openedAtMs,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['is_open'] = Variable<bool>(isOpen);
+    map['opened_at_ms'] = Variable<int>(openedAtMs);
+    return map;
+  }
+
+  ShopStateCompanion toCompanion(bool nullToAbsent) {
+    return ShopStateCompanion(
+      id: Value(id),
+      isOpen: Value(isOpen),
+      openedAtMs: Value(openedAtMs),
+    );
+  }
+
+  factory ShopStateData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ShopStateData(
+      id: serializer.fromJson<int>(json['id']),
+      isOpen: serializer.fromJson<bool>(json['isOpen']),
+      openedAtMs: serializer.fromJson<int>(json['openedAtMs']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'isOpen': serializer.toJson<bool>(isOpen),
+      'openedAtMs': serializer.toJson<int>(openedAtMs),
+    };
+  }
+
+  ShopStateData copyWith({int? id, bool? isOpen, int? openedAtMs}) =>
+      ShopStateData(
+        id: id ?? this.id,
+        isOpen: isOpen ?? this.isOpen,
+        openedAtMs: openedAtMs ?? this.openedAtMs,
+      );
+  ShopStateData copyWithCompanion(ShopStateCompanion data) {
+    return ShopStateData(
+      id: data.id.present ? data.id.value : this.id,
+      isOpen: data.isOpen.present ? data.isOpen.value : this.isOpen,
+      openedAtMs: data.openedAtMs.present
+          ? data.openedAtMs.value
+          : this.openedAtMs,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShopStateData(')
+          ..write('id: $id, ')
+          ..write('isOpen: $isOpen, ')
+          ..write('openedAtMs: $openedAtMs')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, isOpen, openedAtMs);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ShopStateData &&
+          other.id == this.id &&
+          other.isOpen == this.isOpen &&
+          other.openedAtMs == this.openedAtMs);
+}
+
+class ShopStateCompanion extends UpdateCompanion<ShopStateData> {
+  final Value<int> id;
+  final Value<bool> isOpen;
+  final Value<int> openedAtMs;
+  const ShopStateCompanion({
+    this.id = const Value.absent(),
+    this.isOpen = const Value.absent(),
+    this.openedAtMs = const Value.absent(),
+  });
+  ShopStateCompanion.insert({
+    this.id = const Value.absent(),
+    this.isOpen = const Value.absent(),
+    this.openedAtMs = const Value.absent(),
+  });
+  static Insertable<ShopStateData> custom({
+    Expression<int>? id,
+    Expression<bool>? isOpen,
+    Expression<int>? openedAtMs,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (isOpen != null) 'is_open': isOpen,
+      if (openedAtMs != null) 'opened_at_ms': openedAtMs,
+    });
+  }
+
+  ShopStateCompanion copyWith({
+    Value<int>? id,
+    Value<bool>? isOpen,
+    Value<int>? openedAtMs,
+  }) {
+    return ShopStateCompanion(
+      id: id ?? this.id,
+      isOpen: isOpen ?? this.isOpen,
+      openedAtMs: openedAtMs ?? this.openedAtMs,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (isOpen.present) {
+      map['is_open'] = Variable<bool>(isOpen.value);
+    }
+    if (openedAtMs.present) {
+      map['opened_at_ms'] = Variable<int>(openedAtMs.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShopStateCompanion(')
+          ..write('id: $id, ')
+          ..write('isOpen: $isOpen, ')
+          ..write('openedAtMs: $openedAtMs')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDb extends GeneratedDatabase {
   _$AppDb(QueryExecutor e) : super(e);
   $AppDbManager get managers => $AppDbManager(this);
   late final $TasksTable tasks = $TasksTable(this);
   late final $TaskLogsTable taskLogs = $TaskLogsTable(this);
+  late final $ShopStateTable shopState = $ShopStateTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [tasks, taskLogs];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    tasks,
+    taskLogs,
+    shopState,
+  ];
 }
 
 typedef $$TasksTableCreateCompanionBuilder =
@@ -1103,6 +1358,161 @@ typedef $$TaskLogsTableProcessedTableManager =
       TaskLog,
       PrefetchHooks Function()
     >;
+typedef $$ShopStateTableCreateCompanionBuilder =
+    ShopStateCompanion Function({
+      Value<int> id,
+      Value<bool> isOpen,
+      Value<int> openedAtMs,
+    });
+typedef $$ShopStateTableUpdateCompanionBuilder =
+    ShopStateCompanion Function({
+      Value<int> id,
+      Value<bool> isOpen,
+      Value<int> openedAtMs,
+    });
+
+class $$ShopStateTableFilterComposer
+    extends Composer<_$AppDb, $ShopStateTable> {
+  $$ShopStateTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isOpen => $composableBuilder(
+    column: $table.isOpen,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get openedAtMs => $composableBuilder(
+    column: $table.openedAtMs,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ShopStateTableOrderingComposer
+    extends Composer<_$AppDb, $ShopStateTable> {
+  $$ShopStateTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isOpen => $composableBuilder(
+    column: $table.isOpen,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get openedAtMs => $composableBuilder(
+    column: $table.openedAtMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ShopStateTableAnnotationComposer
+    extends Composer<_$AppDb, $ShopStateTable> {
+  $$ShopStateTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get isOpen =>
+      $composableBuilder(column: $table.isOpen, builder: (column) => column);
+
+  GeneratedColumn<int> get openedAtMs => $composableBuilder(
+    column: $table.openedAtMs,
+    builder: (column) => column,
+  );
+}
+
+class $$ShopStateTableTableManager
+    extends
+        RootTableManager<
+          _$AppDb,
+          $ShopStateTable,
+          ShopStateData,
+          $$ShopStateTableFilterComposer,
+          $$ShopStateTableOrderingComposer,
+          $$ShopStateTableAnnotationComposer,
+          $$ShopStateTableCreateCompanionBuilder,
+          $$ShopStateTableUpdateCompanionBuilder,
+          (
+            ShopStateData,
+            BaseReferences<_$AppDb, $ShopStateTable, ShopStateData>,
+          ),
+          ShopStateData,
+          PrefetchHooks Function()
+        > {
+  $$ShopStateTableTableManager(_$AppDb db, $ShopStateTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ShopStateTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ShopStateTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ShopStateTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> isOpen = const Value.absent(),
+                Value<int> openedAtMs = const Value.absent(),
+              }) => ShopStateCompanion(
+                id: id,
+                isOpen: isOpen,
+                openedAtMs: openedAtMs,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<bool> isOpen = const Value.absent(),
+                Value<int> openedAtMs = const Value.absent(),
+              }) => ShopStateCompanion.insert(
+                id: id,
+                isOpen: isOpen,
+                openedAtMs: openedAtMs,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ShopStateTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDb,
+      $ShopStateTable,
+      ShopStateData,
+      $$ShopStateTableFilterComposer,
+      $$ShopStateTableOrderingComposer,
+      $$ShopStateTableAnnotationComposer,
+      $$ShopStateTableCreateCompanionBuilder,
+      $$ShopStateTableUpdateCompanionBuilder,
+      (ShopStateData, BaseReferences<_$AppDb, $ShopStateTable, ShopStateData>),
+      ShopStateData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDbManager {
   final _$AppDb _db;
@@ -1111,4 +1521,6 @@ class $AppDbManager {
       $$TasksTableTableManager(_db, _db.tasks);
   $$TaskLogsTableTableManager get taskLogs =>
       $$TaskLogsTableTableManager(_db, _db.taskLogs);
+  $$ShopStateTableTableManager get shopState =>
+      $$ShopStateTableTableManager(_db, _db.shopState);
 }

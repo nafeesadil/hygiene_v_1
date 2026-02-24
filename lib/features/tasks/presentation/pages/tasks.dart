@@ -128,11 +128,28 @@ class _TasksPageState extends State<TasksPage> {
                               onLongPressDone: () async {
                                 // For now: allow done logging here
                                 // (we will add 10-min gap next)
-                                await _repo.addDone(task.id);
+                                final res = await _repo.tryMarkDone(task.id);
                                 if (!mounted) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('${task.name}: +1')),
-                                );
+
+                                final msg = switch (res.status) {
+                                  MarkDoneStatus.success =>
+                                    res.leveledUp
+                                        ? '${task.name}: +1 (Level up!)'
+                                        : '${task.name}: +1',
+                                  MarkDoneStatus.shopClosed =>
+                                    'Open shop first to log tasks',
+                                  MarkDoneStatus.cooldown =>
+                                    'Wait ${res.waitRemaining!.inMinutes} min before doing this again',
+                                  MarkDoneStatus.alreadyComplete =>
+                                    'Already complete for today (${res.done}/${res.target})',
+                                  MarkDoneStatus.notActive =>
+                                    'Activate this task first',
+                                };
+
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(SnackBar(content: Text(msg)));
+                                setState(() {});
                                 setState(() {});
                               },
                             );

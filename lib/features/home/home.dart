@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:drift/drift.dart' show Value, InsertMode;
+import 'package:hygiene_v_1/main.dart' show appDb;
+import 'package:hygiene_v_1/core/local_db/drift_db.dart' show ShopStateCompanion;
+import 'package:hygiene_v_1/features/tasks/data/task_repository.dart';
 import 'package:hygiene_v_1/features/home/widgets/shop_score.dart';
 
 // Keep this only if you still want the test write button.
@@ -15,13 +18,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final TaskRepository _repo = TaskRepository(appDb);
   double _todayProgressPercent =
       40; // changes during the day (avg of active tasks today)
   double _overallHygieneScorePercent =
       70; // slower score (e.g., last 14 days / last synced)
-
-  static const _kShopIsOpen = 'shop_is_open';
-  static const _kShopOpenedAtMs = 'shop_opened_at_ms';
 
   bool _isOpen = false;
   DateTime? _openedAt;
@@ -54,17 +55,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadShopState() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isOpen = prefs.getBool(_kShopIsOpen) ?? false;
-    final openedAtMs = prefs.getInt(_kShopOpenedAtMs);
+    // ensure singleton row exists (safe no-op if it already exists)
+    await appDb
+        .into(appDb.shopState)
+        .insert(
+          ShopStateCompanion.insert(id: Value(0)),
+          mode: InsertMode.insertOrIgnore,
+        );
 
-    DateTime? openedAt;
-    if (openedAtMs != null) {
-      openedAt = DateTime.fromMillisecondsSinceEpoch(openedAtMs);
-    }
+    final row = await (appDb.select(
+      appDb.shopState,
+    )..where((s) => s.id.equals(0))).getSingle();
 
+    final openedAt = row.openedAtMs == 0
+        ? null
+        : DateTime.fromMillisecondsSinceEpoch(row.openedAtMs);
+
+    if (!mounted) return;
     setState(() {
-      _isOpen = isOpen;
+      _isOpen = row.isOpen;
       _openedAt = openedAt;
     });
 
@@ -83,42 +92,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _toggleShop() async {
-    final prefs = await SharedPreferences.getInstance();
+    final next = !_isOpen;
 
-    if (_isOpen) {
-      // Close shop
-      await prefs.setBool(_kShopIsOpen, false);
+    await _repo.setShopOpen(next);
 
-      setState(() {
-        _isOpen = false;
-        // Keep _openedAt for display? Usually no—reset it.
-        _openedAt = null;
-      });
+    // reload from DB so UI is always consistent
+    await _loadShopState();
 
-      _startOrStopTicker();
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Shop is closed')));
-    } else {
-      // Open shop
-      final now = DateTime.now();
-      await prefs.setBool(_kShopIsOpen, true);
-      await prefs.setInt(_kShopOpenedAtMs, now.millisecondsSinceEpoch);
-
-      setState(() {
-        _isOpen = true;
-        _openedAt = now;
-      });
-
-      _startOrStopTicker();
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Shop is open')));
-    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(next ? 'Shop is open' : 'Shop is closed')),
+    );
   }
 
   String _formatDuration(Duration d) {

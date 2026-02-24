@@ -52,13 +52,27 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
 
   Future<void> _markDone() async {
     // Later: enforce 10-minute gap per task (we’ll add that next).
-    await _repo.addDone(widget.task.id);
+    final res = await _repo.tryMarkDone(widget.task.id);
     await _load();
-
     if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('${widget.task.name}: +1')));
+
+    final msg = switch (res.status) {
+      MarkDoneStatus.success =>
+        res.leveledUp
+            ? '${widget.task.name}: +1 (Level up!)'
+            : '${widget.task.name}: +1',
+      MarkDoneStatus.shopClosed => 'Open shop first to log tasks',
+      MarkDoneStatus.cooldown => () {
+  final secs = res.waitRemaining?.inSeconds ?? 0;
+  final show = secs <= 0 ? 1 : secs; // never show 0
+  return 'Wait ${show}s before doing this again';
+}(),
+      MarkDoneStatus.alreadyComplete =>
+        'Already complete for today (${res.done}/${res.target})',
+      MarkDoneStatus.notActive => 'Activate this task first',
+    };
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   @override

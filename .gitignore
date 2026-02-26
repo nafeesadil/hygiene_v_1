@@ -49,4 +49,5 @@ linux/
 macos/
 windows/
 
+# build_runner / drift generated
 **/*.g.dart

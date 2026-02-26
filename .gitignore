@@ -49,3 +49,4 @@ linux/
 macos/
 windows/
 
+**/*.g.dart

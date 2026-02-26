@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:drift/drift.dart' show Value, InsertMode;
 import 'package:hygiene_v_1/main.dart' show appDb;
-import 'package:hygiene_v_1/core/local_db/drift_db.dart' show ShopStateCompanion;
+import 'package:hygiene_v_1/core/local_db/drift_db.dart'
+    show ShopStateCompanion;
 import 'package:hygiene_v_1/features/tasks/data/task_repository.dart';
 import 'package:hygiene_v_1/features/home/widgets/shop_score.dart';
 

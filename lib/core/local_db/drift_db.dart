@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
+import 'package:drift_sqflite/drift_sqflite.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -19,8 +18,16 @@ class AppDb extends _$AppDb {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
+    // Preserve EXACT same DB location and filename as your current FFI setup:
+    // <app-documents-dir>/hygia.sqlite
     final dir = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dir.path, 'hygia.sqlite'));
-    return NativeDatabase.createInBackground(file);
+    final dbPath = p.join(dir.path, 'hygia.sqlite');
+
+    // SqfliteQueryExecutor uses sqflite (platform sqlite), no FFI libs.
+    return SqfliteQueryExecutor(
+      path: dbPath,
+      singleInstance: true,
+      // logStatements: true, // uncomment if you want SQL logs
+    );
   });
 }

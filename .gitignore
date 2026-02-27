@@ -51,3 +51,8 @@ windows/
 
 # build_runner / drift generated
 **/*.g.dart
+
+# FVM Version Cache
+.fvm/
+# FVM (do not commit SDK)
+.fvm/

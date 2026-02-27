@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadOverallHygieneScore() async {
     // Phase 1: dummy (or last known from local storage)
     // Later: compute offline rolling score OR load last synced score
-    setState(() => _overallHygieneScorePercent = 70);
+    setState(() => _overallHygieneScorePercent = 50);
   }
 
   Future<void> _loadShopState() async {

@@ -4,6 +4,7 @@ import 'package:hygiene_v_1/main.dart' show appDb;
 import 'package:hygiene_v_1/features/tasks/data/task_repository.dart';
 import 'package:hygiene_v_1/features/tasks/domain/built_in_tasks.dart';
 import 'package:hygiene_v_1/features/tasks/domain/task_definition.dart';
+import 'package:hygiene_v_1/core/widgets/hygia_dialogue.dart';
 
 // If you kept task_cards in widgets:
 import 'package:hygiene_v_1/features/tasks/presentation/widgets/task_cards.dart';
@@ -52,18 +53,28 @@ class _TasksPageState extends State<TasksPage> {
     final res = await _repo.tryMarkDone(task.id);
     if (!mounted) return;
 
-    final msg = switch (res.status) {
-      MarkDoneStatus.success =>
-        res.leveledUp ? '${task.name}: +1 (Level up!)' : '${task.name}: +1',
-      MarkDoneStatus.shopClosed => 'Open shop first to log tasks',
+    final (title, description) = switch (res.status) {
+      MarkDoneStatus.success => res.leveledUp
+          ? ('Level Up! 🎉', '${task.name}: +1 point')
+          : ('Task Logged', '${task.name}: +1 point'),
+      MarkDoneStatus.shopClosed =>
+        ('Shop Closed', 'Open your shop first to log tasks.'),
       MarkDoneStatus.cooldown =>
-        'Wait ${res.waitRemaining!.inMinutes} min before doing this again',
+        ('Wait a Moment', 'Please wait ${res.waitRemaining!.inMinutes} min before logging this task again.'),
       MarkDoneStatus.alreadyComplete =>
-        'Already complete for today (${res.done}/${res.target})',
-      MarkDoneStatus.notActive => 'Activate this task first',
+        ('Complete for Today', 'You\'ve already logged this ${res.target} times today (${res.done}/${res.target})'),
+      MarkDoneStatus.notActive =>
+        ('Task Inactive', 'Please activate this task first.'),
     };
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    showDialog(
+      context: context,
+      builder: (_) => HygiaDialog(
+        title: title,
+        description: description,
+        primaryText: 'OK',
+      ),
+    );
     setState(() {});
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hygiene_v_1/features/tasks/domain/task_definition.dart';
 import 'package:hygiene_v_1/features/tasks/data/task_repository.dart';
 import 'package:hygiene_v_1/main.dart' show appDb;
+import 'package:hygiene_v_1/core/widgets/hygia_dialogue.dart';
 
 class TaskDetailPage extends StatefulWidget {
   final TaskDefinition task;
@@ -43,9 +44,14 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     await _load();
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(_isActive ? 'Task activated' : 'Task deactivated'),
+    showDialog(
+      context: context,
+      builder: (_) => HygiaDialog(
+        title: _isActive ? 'Task Activated' : 'Task Deactivated',
+        description: _isActive
+            ? 'You can now log completions for this task.'
+            : 'This task is no longer active.',
+        primaryText: 'OK',
       ),
     );
   }
@@ -56,23 +62,57 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     await _load();
     if (!mounted) return;
 
-    final msg = switch (res.status) {
+    final (title, description) = switch (res.status) {
       MarkDoneStatus.success =>
         res.leveledUp
             ? '${widget.task.name}: +1 (Level up!)'
             : '${widget.task.name}: +1',
       MarkDoneStatus.shopClosed => 'Open shop first to log tasks',
       MarkDoneStatus.cooldown => () {
-  final secs = res.waitRemaining?.inSeconds ?? 0;
-  final show = secs <= 0 ? 1 : secs; // never show 0
-  return 'Wait ${show}s before doing this again';
-}(),
+        final secs = res.waitRemaining?.inSeconds ?? 0;
+        final show = secs <= 0 ? 1 : secs; // never show 0
+        return 'Wait ${show}s before doing this again';
+      }(),
       MarkDoneStatus.alreadyComplete =>
         'Already complete for today (${res.done}/${res.target})',
       MarkDoneStatus.notActive => 'Activate this task first',
     };
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    final (title, description) = switch (res.status) {
+      MarkDoneStatus.success =>
+        res.leveledUp
+            ? ('Level Up! 🎉', '${widget.task.name}: +1 point')
+            : ('Task Logged', '${widget.task.name}: +1 point'),
+      MarkDoneStatus.shopClosed => (
+        'Shop Closed',
+        'Open your shop first to log tasks.',
+      ),
+      MarkDoneStatus.cooldown => () {
+        final secs = res.waitRemaining?.inSeconds ?? 0;
+        final show = secs <= 0 ? 1 : secs;
+        return (
+          'Wait a Moment',
+          'Please wait ${show}s before logging this task again.',
+        );
+      }(),
+      MarkDoneStatus.alreadyComplete => (
+        'Complete for Today',
+        'You\'ve already logged this ${res.target} times today (${res.done}/${res.target})',
+      ),
+      MarkDoneStatus.notActive => (
+        'Task Inactive',
+        'Please activate this task first.',
+      ),
+    };
+
+    showDialog(
+      context: context,
+      builder: (_) => HygiaDialog(
+        title: title,
+        description: description,
+        primaryText: 'OK',
+      ),
+    );
   }
 
   @override

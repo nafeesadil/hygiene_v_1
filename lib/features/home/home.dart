@@ -152,89 +152,86 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 24),
 
-              // Square card
-              AspectRatio(
-                aspectRatio: 1, // makes it a square
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: theme.dividerColor.withValues(alpha: 0.2),
+              // Card
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: theme.dividerColor.withValues(alpha: 0.2),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 12,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 6),
+                      color: Colors.black.withValues(alpha: 0.06),
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 12,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 6),
-                        color: Colors.black.withValues(alpha: 0.06),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _isOpen ? 'Welcome back 👋' : 'Welcome 👋',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _isOpen ? 'Welcome back 👋' : 'Welcome 👋',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _isOpen
+                          ? 'Your shop is currently open.'
+                          : 'Tap the button to open your shop.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.textTheme.bodyMedium?.color?.withValues(
+                          alpha: 0.75,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _isOpen
-                            ? 'Your shop is currently open.'
-                            : 'Tap the button to open your shop.',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.textTheme.bodyMedium?.color?.withValues(
-                            alpha: 0.75,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
+                    ),
+                    SizedBox(height: 20),
 
-                      HygieneScoreSummary(
-                        todayPercent: _todayProgressPercent,
-                        overallPercent: _overallHygieneScorePercent,
-                      ),
+                    HygieneScoreSummary(
+                      todayPercent: _todayProgressPercent,
+                      overallPercent: _overallHygieneScorePercent,
+                    ),
 
-                      SizedBox(height: 10),
+                    SizedBox(height: 10),
 
-                      Text(
-                        'Open for',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.textTheme.bodyMedium?.color?.withValues(
-                            alpha: 0.7,
-                          ),
+                    Text(
+                      'Open for',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.textTheme.bodyMedium?.color?.withValues(
+                          alpha: 0.7,
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        _isOpen ? _formatDuration(openFor) : '00:00:00',
-                        style: theme.textTheme.displaySmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      _isOpen ? _formatDuration(openFor) : '00:00:00',
+                      style: theme.textTheme.displaySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Icon(
+                          _isOpen ? Icons.circle : Icons.circle_outlined,
+                          size: 14,
+                          color: _isOpen ? Colors.green : Colors.red,
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Icon(
-                            _isOpen ? Icons.circle : Icons.circle_outlined,
-                            size: 14,
-                            color: _isOpen ? Colors.green : Colors.red,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            _isOpen ? 'Status: Open' : 'Status: Closed',
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _isOpen ? 'Status: Open' : 'Status: Closed',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],

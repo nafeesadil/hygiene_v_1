@@ -65,22 +65,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
     final (title, description) = switch (res.status) {
       MarkDoneStatus.success =>
         res.leveledUp
-            ? '${widget.task.name}: +1 (Level up!)'
-            : '${widget.task.name}: +1',
-      MarkDoneStatus.shopClosed => 'Open shop first to log tasks',
-      MarkDoneStatus.cooldown => () {
-        final secs = res.waitRemaining?.inSeconds ?? 0;
-        final show = secs <= 0 ? 1 : secs; // never show 0
-        return 'Wait ${show}s before doing this again';
-      }(),
-      MarkDoneStatus.alreadyComplete =>
-        'Already complete for today (${res.done}/${res.target})',
-      MarkDoneStatus.notActive => 'Activate this task first',
-    };
-
-    final (title, description) = switch (res.status) {
-      MarkDoneStatus.success =>
-        res.leveledUp
             ? ('Level Up! 🎉', '${widget.task.name}: +1 point')
             : ('Task Logged', '${widget.task.name}: +1 point'),
       MarkDoneStatus.shopClosed => (

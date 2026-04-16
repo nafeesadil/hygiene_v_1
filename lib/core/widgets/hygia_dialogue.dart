@@ -47,13 +47,13 @@ class HygiaDialog extends StatelessWidget {
                   color: theme.cardColor,
                   borderRadius: BorderRadius.circular(18),
                   border: Border.all(
-                    color: theme.dividerColor.withOpacity(0.18),
+                    color: theme.dividerColor.withValues(alpha: 0.18),
                   ),
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 18,
                       offset: const Offset(0, 10),
-                      color: Colors.black.withOpacity(0.10),
+                      color: Colors.black.withValues(alpha: 0.10),
                     ),
                   ],
                 ),
@@ -79,7 +79,7 @@ class HygiaDialog extends StatelessWidget {
                             style: theme.textTheme.bodyMedium?.copyWith(
                               height: 1.25,
                               color: theme.textTheme.bodyMedium?.color
-                                  ?.withOpacity(0.80),
+                                  ?.withValues(alpha: 0.80),
                             ),
                           ),
 

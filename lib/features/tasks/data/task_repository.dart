@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:hygiene_v_1/core/local_db/drift_db.dart';
 import 'package:hygiene_v_1/features/tasks/domain/built_in_tasks.dart';
 import 'package:hygiene_v_1/features/tasks/domain/task_definition.dart';
+import 'package:hygiene_v_1/features/tasks/domain/task_rules.dart';
+import 'package:hygiene_v_1/features/vendor/data/vendor_repository.dart';
 
 enum MarkDoneStatus {
   success,
@@ -15,6 +17,8 @@ class MarkDoneResult {
   final MarkDoneStatus status;
   final int done;
   final int target;
+  final int earnedXp;
+  final int taskLevel;
   final Duration? waitRemaining;
   final bool leveledUp;
 
@@ -22,6 +26,8 @@ class MarkDoneResult {
     required this.status,
     required this.done,
     required this.target,
+    required this.earnedXp,
+    required this.taskLevel,
     this.waitRemaining,
     this.leveledUp = false,
   });
@@ -41,37 +47,47 @@ class TaskRepository {
   TaskDefinition _defOf(String taskKey) =>
       builtInTasks.firstWhere((t) => t.id == taskKey);
 
-  int _targetForLevel(String taskKey, int level) {
-    final def = _defOf(taskKey);
-    final idx = (level - 1).clamp(0, def.levels.length - 1);
-    return def.levels[idx].timesPerDayTarget;
-  }
+  Future<Duration> getCooldownRemaining(String taskKey) async {
+    await ensureSeeded();
 
-  int _valuePointsForLevel(String taskKey, int level) {
+    final taskRow = await (_db.select(
+      _db.tasks,
+    )..where((t) => t.taskKey.equals(taskKey))).getSingleOrNull();
+
+    if (taskRow == null) return Duration.zero;
+
     final def = _defOf(taskKey);
-    final idx = (level - 1).clamp(0, def.levels.length - 1);
-    return def.levels[idx].valuePoints;
+    final cooldown = taskCooldownFor(def);
+
+    if (cooldown <= Duration.zero) return Duration.zero;
+    if (taskRow.lastDoneAtMs == 0) return Duration.zero;
+
+    final last = DateTime.fromMillisecondsSinceEpoch(taskRow.lastDoneAtMs);
+    final diff = DateTime.now().difference(last);
+
+    if (diff >= cooldown) return Duration.zero;
+
+    return cooldown - diff;
   }
 
   Future<void> ensureSeeded() async {
-    final countExp = _db.tasks.id.count();
+    final existingRows = await _db.select(_db.tasks).get();
+    final existingKeys = existingRows.map((e) => e.taskKey).toSet();
 
-    final row = await (_db.selectOnly(
-      _db.tasks,
-    )..addColumns([countExp])).getSingleOrNull();
+    final missingDefs = builtInTasks
+        .where((def) => !existingKeys.contains(def.id))
+        .toList();
 
-    final count = row?.read(countExp) ?? 0;
-
-    if (count > 0) return;
+    if (missingDefs.isEmpty) return;
 
     await _db.batch((batch) {
       batch.insertAll(_db.tasks, [
-        for (final def in builtInTasks)
+        for (final def in missingDefs)
           TasksCompanion.insert(
             taskKey: def.id,
             isActive: const Value(false),
             level: const Value(1),
-            valuePoints: Value(def.levels[0].valuePoints),
+            valuePoints: Value(def.levels.first.valuePoints),
             lastDoneAtMs: const Value(0),
           ),
       ]);
@@ -88,14 +104,10 @@ class TaskRepository {
   Future<void> setShopOpen(bool open) async {
     final nowMs = DateTime.now().millisecondsSinceEpoch;
 
-    // ensure singleton row exists
     await _db
         .into(_db.shopState)
         .insert(
-          ShopStateCompanion(
-            id: const Value(0),
-            // leave defaults for the rest
-          ),
+          ShopStateCompanion(id: const Value(0)),
           mode: InsertMode.insertOrIgnore,
         );
 
@@ -105,13 +117,19 @@ class TaskRepository {
         openedAtMs: Value(open ? nowMs : 0),
       ),
     );
+
+    if (open) {
+      await VendorRepository(_db).markShopOpenedToday();
+    }
   }
 
-  Future<List<Task>> getActiveTasks() {
+  Future<List<Task>> getActiveTasks() async {
+    await ensureSeeded();
     return (_db.select(_db.tasks)..where((t) => t.isActive.equals(true))).get();
   }
 
   Future<bool> isActive(String taskKey) async {
+    await ensureSeeded();
     final row = await (_db.select(
       _db.tasks,
     )..where((t) => t.taskKey.equals(taskKey))).getSingleOrNull();
@@ -119,6 +137,7 @@ class TaskRepository {
   }
 
   Future<int> getLevel(String taskKey) async {
+    await ensureSeeded();
     final row = await (_db.select(
       _db.tasks,
     )..where((t) => t.taskKey.equals(taskKey))).getSingleOrNull();
@@ -126,11 +145,34 @@ class TaskRepository {
   }
 
   Future<void> setActive(String taskKey, bool active) async {
+    await ensureSeeded();
+
+    final existing = await (_db.select(
+      _db.tasks,
+    )..where((t) => t.taskKey.equals(taskKey))).getSingleOrNull();
+
+    if (existing == null) {
+      final def = _defOf(taskKey);
+      await _db
+          .into(_db.tasks)
+          .insert(
+            TasksCompanion.insert(
+              taskKey: def.id,
+              isActive: Value(active),
+              level: const Value(1),
+              valuePoints: Value(def.levels.first.valuePoints),
+              lastDoneAtMs: const Value(0),
+            ),
+          );
+      return;
+    }
+
     await (_db.update(_db.tasks)..where((t) => t.taskKey.equals(taskKey)))
         .write(TasksCompanion(isActive: Value(active)));
   }
 
   Future<void> setLevel(String taskKey, int level, int valuePoints) async {
+    await ensureSeeded();
     await (_db.update(
       _db.tasks,
     )..where((t) => t.taskKey.equals(taskKey))).write(
@@ -151,97 +193,87 @@ class TaskRepository {
     return row.read(countExp) ?? 0;
   }
 
-  /// Public wrapper for UI: get today's count for a task.
   Future<int> getTodayCount(String taskKey) async {
     final dateKey = _dateKey(DateTime.now());
     return _todayCountFor(taskKey, dateKey);
   }
 
-  /// Public wrapper that attempts to mark a task done and returns the
-  /// [MarkDoneResult] for the UI to handle user feedback.
   Future<MarkDoneResult> tryMarkDone(String taskKey) async {
     return addDoneGuarded(taskKey);
   }
 
   Future<MarkDoneResult> addDoneGuarded(String taskKey) async {
+    await ensureSeeded();
+
     final now = DateTime.now();
     final dateKey = _dateKey(now);
+    final def = _defOf(taskKey);
 
     return _db.transaction(() async {
-      // 1) shop must be open
-      final open = await isShopOpen();
-      if (!open) {
-        // show current done/target for UI consistency
-        final taskRow = await (_db.select(
-          _db.tasks,
-        )..where((t) => t.taskKey.equals(taskKey))).getSingleOrNull();
-        final lvl = taskRow?.level ?? 1;
-        final target = _targetForLevel(taskKey, lvl);
-        final done = await _todayCountFor(taskKey, dateKey);
-        return MarkDoneResult(
-          status: MarkDoneStatus.shopClosed,
-          done: done,
-          target: target,
-        );
-      }
-
-      // 2) task must be active
       final taskRow = await (_db.select(
         _db.tasks,
       )..where((t) => t.taskKey.equals(taskKey))).getSingleOrNull();
 
+      final currentLevel = taskRow?.level ?? 1;
+      final target = taskTargetForLevel(def, currentLevel);
+      final doneToday = await _todayCountFor(taskKey, dateKey);
+
       if (taskRow == null || !taskRow.isActive) {
-        final lvl = taskRow?.level ?? 1;
-        final target = _targetForLevel(taskKey, lvl);
-        final done = await _todayCountFor(taskKey, dateKey);
         return MarkDoneResult(
           status: MarkDoneStatus.notActive,
-          done: done,
+          done: doneToday,
           target: target,
+          earnedXp: 0,
+          taskLevel: currentLevel,
         );
       }
 
-      // 3) cooldown: DEBUG 10 seconds since lastDoneAtMs
-      const cooldown = Duration(seconds: 10); // DEBUG
-      final lastMs = taskRow.lastDoneAtMs;
-
-      if (lastMs != 0) {
-        final last = DateTime.fromMillisecondsSinceEpoch(lastMs);
-
-        // Guard against weird cases (clock changes / future timestamps)
-        final diff = now.difference(last);
-
-        // If last is in the future, treat it as "just done now"
-        final effectiveDiff = diff.isNegative ? Duration.zero : diff;
-
-        if (effectiveDiff < cooldown) {
-          // Use remaining time based on effectiveDiff
-          final wait = cooldown - effectiveDiff;
-
-          final target = _targetForLevel(taskKey, taskRow.level);
-          final done = await _todayCountFor(taskKey, dateKey);
-
+      if (def.requiresShopOpen) {
+        final open = await isShopOpen();
+        if (!open) {
           return MarkDoneResult(
-            status: MarkDoneStatus.cooldown,
-            done: done,
+            status: MarkDoneStatus.shopClosed,
+            done: doneToday,
             target: target,
-            waitRemaining: wait,
+            earnedXp: 0,
+            taskLevel: currentLevel,
           );
         }
       }
 
-      // 4) cap by target
-      final target = _targetForLevel(taskKey, taskRow.level);
-      final before = await _todayCountFor(taskKey, dateKey);
-      if (before >= target) {
+      final cooldown = taskCooldownFor(def);
+      final lastMs = taskRow.lastDoneAtMs;
+
+      if (cooldown > Duration.zero && lastMs != 0) {
+        final last = DateTime.fromMillisecondsSinceEpoch(lastMs);
+        final diff = now.difference(last);
+        final effectiveDiff = diff.isNegative ? Duration.zero : diff;
+
+        if (effectiveDiff < cooldown) {
+          return MarkDoneResult(
+            status: MarkDoneStatus.cooldown,
+            done: doneToday,
+            target: target,
+            earnedXp: 0,
+            taskLevel: currentLevel,
+            waitRemaining: cooldown - effectiveDiff,
+          );
+        }
+      }
+
+      final hardCap = taskEffectiveDailyCap(def, currentLevel);
+      if (doneToday >= hardCap) {
         return MarkDoneResult(
           status: MarkDoneStatus.alreadyComplete,
-          done: before,
+          done: doneToday,
           target: target,
+          earnedXp: 0,
+          taskLevel: currentLevel,
         );
       }
 
-      // 5) insert log
+      final earnedXp = taskXpForCompletion(def, currentLevel);
+
       await _db
           .into(_db.taskLogs)
           .insert(
@@ -252,29 +284,30 @@ class TaskRepository {
             ),
           );
 
-      // 6) update lastDoneAtMs
       await (_db.update(
         _db.tasks,
       )..where((t) => t.taskKey.equals(taskKey))).write(
         TasksCompanion(lastDoneAtMs: Value(now.millisecondsSinceEpoch)),
       );
 
-      final after = before + 1;
+      final after = doneToday + 1;
 
-      // 7) level-up exactly when finishing today's target
       bool leveledUp = false;
+      int finalLevel = currentLevel;
+
       if (after == target) {
-        final nextLevel = (taskRow.level + 1).clamp(1, 5);
-        if (nextLevel != taskRow.level) {
+        final nextLevel = (currentLevel + 1).clamp(1, 5);
+        if (nextLevel != currentLevel) {
           await (_db.update(
             _db.tasks,
           )..where((t) => t.taskKey.equals(taskKey))).write(
             TasksCompanion(
               level: Value(nextLevel),
-              valuePoints: Value(_valuePointsForLevel(taskKey, nextLevel)),
+              valuePoints: Value(taskValuePointsForLevel(def, nextLevel)),
             ),
           );
           leveledUp = true;
+          finalLevel = nextLevel;
         }
       }
 
@@ -282,6 +315,8 @@ class TaskRepository {
         status: MarkDoneStatus.success,
         done: after,
         target: target,
+        earnedXp: earnedXp,
+        taskLevel: finalLevel,
         leveledUp: leveledUp,
       );
     });

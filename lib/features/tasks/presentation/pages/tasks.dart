@@ -1,16 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:hygiene_v_1/main.dart' show appDb;
+import 'package:hygiene_v_1/core/widgets/hygia_dialogue.dart';
+import 'package:hygiene_v_1/features/shared/application/task_progress_service.dart';
 import 'package:hygiene_v_1/features/tasks/data/task_repository.dart';
 import 'package:hygiene_v_1/features/tasks/domain/built_in_tasks.dart';
 import 'package:hygiene_v_1/features/tasks/domain/task_definition.dart';
-import 'package:hygiene_v_1/core/widgets/hygia_dialogue.dart';
-
-// If you kept task_cards in widgets:
-import 'package:hygiene_v_1/features/tasks/presentation/widgets/task_cards.dart';
-
-// Adjust this import to wherever you created the file:
 import 'package:hygiene_v_1/features/tasks/presentation/pages/task_detail_page.dart';
+import 'package:hygiene_v_1/features/vendor/data/vendor_repository.dart';
+import 'package:hygiene_v_1/features/vendor/domain/vendor_models.dart';
+import 'package:hygiene_v_1/main.dart' show appDb;
 
 class TasksPage extends StatefulWidget {
   const TasksPage({super.key});
@@ -20,16 +19,69 @@ class TasksPage extends StatefulWidget {
 }
 
 class _TasksPageState extends State<TasksPage> {
-  final _controller = PageController();
+  Map<String, Duration> _cooldowns = {};
+  int _dashboardTick = 0;
   final TaskRepository _repo = TaskRepository(appDb);
+  final VendorRepository _vendorRepo = VendorRepository(appDb);
+  late final TaskProgressService _progressService = TaskProgressService(
+    _repo,
+    _vendorRepo,
+  );
 
-  int _pageIndex = 0;
+  int _tabIndex = 0;
   Set<String> _activeKeys = {};
+  VendorDashboard? _dashboard;
+  Timer? _ticker;
 
   @override
   void initState() {
     super.initState();
-    _refreshActive();
+    _loadAll();
+
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) async {
+      if (!mounted) return;
+
+      await _loadCooldowns();
+
+      _dashboardTick++;
+      if (_dashboardTick % 5 == 0) {
+        await _loadDashboardOnly();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadCooldowns() async {
+    final next = <String, Duration>{};
+
+    for (final taskKey in _activeKeys) {
+      next[taskKey] = await _repo.getCooldownRemaining(taskKey);
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _cooldowns = next;
+    });
+  }
+
+  Future<void> _loadAll() async {
+    await _refreshActive();
+    await _loadCooldowns();
+    await _loadDashboardOnly();
+  }
+
+  Future<void> _loadDashboardOnly() async {
+    final dashboard = await _vendorRepo.getDashboard();
+    if (!mounted) return;
+    setState(() {
+      _dashboard = dashboard;
+    });
   }
 
   Future<void> _refreshActive() async {
@@ -45,27 +97,85 @@ class _TasksPageState extends State<TasksPage> {
       context,
       MaterialPageRoute(builder: (_) => TaskDetailPage(task: task)),
     );
-    await _refreshActive(); // reflects activation changes after returning
-    if (mounted) setState(() {});
+    await _loadAll();
   }
 
-  Future<void> _handleMarkDone(TaskDefinition task) async {
-    final res = await _repo.tryMarkDone(task.id);
+  Future<void> _showCompletionPrompt(TaskDefinition task) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Complete this task?'),
+        content: Text(
+          'You are about to log "${task.name}". Great hygiene habits are built one small action at a time.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            icon: const Icon(Icons.check_circle_rounded),
+            label: const Text('Mark as Done'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    await _quickMarkDone(task);
+    await _loadAll();
+  }
+
+  String _formatCooldown(Duration d) {
+    final totalSeconds = d.inSeconds;
+    if (totalSeconds <= 0) return 'Ready';
+
+    final minutes = totalSeconds ~/ 60;
+    final seconds = totalSeconds % 60;
+
+    final mm = minutes.toString().padLeft(2, '0');
+    final ss = seconds.toString().padLeft(2, '0');
+
+    return '$mm:$ss';
+  }
+
+  Future<void> _quickMarkDone(TaskDefinition task) async {
+    final result = await _progressService.completeTask(task.id);
+    final res = result.taskResult;
+
     if (!mounted) return;
 
     final (title, description) = switch (res.status) {
-      MarkDoneStatus.success => res.leveledUp
-          ? ('Level Up! 🎉', '${task.name}: +1 point')
-          : ('Task Logged', '${task.name}: +1 point'),
-      MarkDoneStatus.shopClosed =>
-        ('Shop Closed', 'Open your shop first to log tasks.'),
-      MarkDoneStatus.cooldown =>
-        ('Wait a Moment', 'Please wait ${res.waitRemaining!.inMinutes} min before logging this task again.'),
-      MarkDoneStatus.alreadyComplete =>
-        ('Complete for Today', 'You\'ve already logged this ${res.target} times today (${res.done}/${res.target})'),
-      MarkDoneStatus.notActive =>
-        ('Task Inactive', 'Please activate this task first.'),
+      MarkDoneStatus.success =>
+        res.leveledUp
+            ? (
+                'Level Up! 🎉',
+                '${task.name}: +${res.earnedXp} XP and task level increased.',
+              )
+            : ('Task Logged', '${task.name}: +${res.earnedXp} XP added.'),
+      MarkDoneStatus.shopClosed => (
+        'Shop Closed',
+        'Open your shop first to log tasks.',
+      ),
+      MarkDoneStatus.cooldown => (
+        'Wait a Moment',
+        'Please wait ${_formatCooldown(res.waitRemaining ?? Duration.zero)} before logging this task again.',
+      ),
+      MarkDoneStatus.alreadyComplete => (
+        'Complete for Today',
+        'You have already logged this ${res.target} times today.',
+      ),
+      MarkDoneStatus.notActive => (
+        'Task Inactive',
+        'Please activate this task first.',
+      ),
     };
+
+    setState(() {
+      _dashboard = result.dashboard;
+    });
 
     showDialog(
       context: context,
@@ -75,125 +185,474 @@ class _TasksPageState extends State<TasksPage> {
         primaryText: 'OK',
       ),
     );
-    setState(() {});
+  }
+
+  String _resetInLabel() {
+    final now = DateTime.now();
+    final nextMidnight = DateTime(now.year, now.month, now.day + 1);
+    final diff = nextMidnight.difference(now);
+    final h = diff.inHours;
+    final m = diff.inMinutes.remainder(60);
+    if (h <= 0) return 'RESET SOON';
+    return 'RESET IN ${h}H${m > 0 ? ' ${m}M' : ''}';
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<TaskDefinition> listTasks = switch (_pageIndex) {
-      0 => builtInTasks.where((t) => _activeKeys.contains(t.id)).toList(),
-      1 => builtInTasks,
-      _ => const <TaskDefinition>[],
-    };
+    final theme = Theme.of(context);
+    final dashboard = _dashboard;
+
+    final tasks = _tabIndex == 0
+        ? builtInTasks.where((t) => _activeKeys.contains(t.id)).toList()
+        : builtInTasks;
 
     return Scaffold(
       body: SafeArea(
-        top: true,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 25.0,
-                vertical: 20,
+        child: RefreshIndicator(
+          onRefresh: _loadAll,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      'Hygiene Tasks',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const Spacer(),
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundColor: theme.colorScheme.primary.withValues(
+                        alpha: 0.15,
+                      ),
+                      child: Icon(
+                        Icons.person,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                children: const [
-                  Text(
-                    'My ',
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  ),
-                  Text('Tasks', style: TextStyle(fontSize: 28)),
-                ],
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: dashboard == null
+                    ? const _LoadingCard()
+                    : _VendorProgressCard(dashboard: dashboard),
               ),
-            ),
-
-            const SizedBox(height: 10),
-
-            SizedBox(
-              height: 200,
-              child: PageView(
-                controller: _controller,
-                onPageChanged: (i) => setState(() => _pageIndex = i),
-                scrollDirection: Axis.horizontal,
-                children: const [
-                  TaskCard(), // Activated tasks
-                  TaskCard(), // All tasks
-                  TaskCard(), // Create new task (later)
-                ],
+              const SizedBox(height: 14),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: _SegmentedTabs(
+                  leftText: 'Daily Tasks',
+                  rightText: 'All Tasks',
+                  index: _tabIndex,
+                  onChanged: (i) => setState(() => _tabIndex = i),
+                ),
               ),
-            ),
-
-            const SizedBox(height: 25),
-
-            SmoothPageIndicator(
-              controller: _controller,
-              count: 3,
-              effect: ExpandingDotsEffect(
-                activeDotColor: Colors.grey,
-                dotColor: Colors.black26,
-                dotHeight: 8,
-                dotWidth: 8,
-              ),
-            ),
-
-            const SizedBox(height: 18),
-
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _pageIndex == 2
-                    ? const _CreateTaskPlaceholder()
-                    : ListView.separated(
-                        itemCount: listTasks.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          final task = listTasks[index];
-                          final isActive = _activeKeys.contains(task.id);
-
-                          // Activated page (page 0): show richer tile with progress later
-                          if (_pageIndex == 0) {
-                            return _ActivatedSimpleTile(
-                              task: task,
-                              onTap: () => _openDetail(task),
-                              onLongPressDone: () => _handleMarkDone(task),
-                            );
-                          }
-
-                          // All tasks page (page 1): simple list tile
-                          return ListTile(
-                            leading: Icon(task.icon),
-                            title: Text(task.name),
-                            subtitle: Text(
-                              task.shortDescription,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: Row(
+                  children: [
+                    Text(
+                      _tabIndex == 0 ? 'Active Checklist' : 'All Tasks',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const Spacer(),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.refresh_rounded,
+                          size: 18,
+                          color: theme.textTheme.bodySmall?.color?.withValues(
+                            alpha: 0.70,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          _resetInLabel(),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: theme.textTheme.bodySmall?.color?.withValues(
+                              alpha: 0.70,
                             ),
-                            trailing: Icon(
-                              isActive
-                                  ? Icons.check_circle_rounded
-                                  : Icons.arrow_forward_ios_rounded,
-                              size: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.fromLTRB(18, 0, 18, 30),
+                  itemCount: _tabIndex == 0 ? tasks.length + 1 : tasks.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  itemBuilder: (context, index) {
+                    if (_tabIndex == 0 && index == tasks.length) {
+                      return _SuggestCard(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const HygiaDialog(
+                              title: 'Coming Soon',
+                              description:
+                                  'You will be able to suggest new hygiene tasks here.',
+                              primaryText: 'OK',
                             ),
-                            onTap: () => _openDetail(task),
                           );
                         },
-                      ),
+                      );
+                    }
+
+                    final task = tasks[index];
+
+                    return FutureBuilder<int>(
+                      future: _repo.getTodayCount(task.id),
+                      builder: (context, snap) {
+                        final done = snap.data ?? 0;
+
+                        return FutureBuilder<int>(
+                          future: _repo.getLevel(task.id),
+                          builder: (context, levelSnap) {
+                            final level = (levelSnap.data ?? 1).clamp(1, 5);
+                            final rule = task.levels[level - 1];
+                            final target = rule.timesPerDayTarget;
+                            final subtitle = '$done / $target today';
+                            final baseRightText =
+                                'L$level • +${rule.valuePoints} XP';
+
+                            if (_tabIndex == 0) {
+                              final remaining =
+                                  _cooldowns[task.id] ?? Duration.zero;
+                              final isCoolingDown = remaining > Duration.zero;
+
+                              final rightText = isCoolingDown
+                                  ? 'Wait ${_formatCooldown(remaining)}'
+                                  : baseRightText;
+
+                              return _DailyTaskTile(
+                                task: task,
+                                subtitle: subtitle,
+                                rightText: rightText,
+                                isCoolingDown: isCoolingDown,
+                                onTap: () => _showCompletionPrompt(task),
+                                onLongPressDone: () =>
+                                    _showCompletionPrompt(task),
+                              );
+                            }
+
+                            final isActive = _activeKeys.contains(task.id);
+                            return _AllTaskTile(
+                              task: task,
+                              active: isActive,
+                              subtitle: subtitle,
+                              rightText: baseRightText,
+                              onTap: () => _openDetail(task),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _ActivatedSimpleTile extends StatelessWidget {
+class _LoadingCard extends StatelessWidget {
+  const _LoadingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Theme.of(context).cardColor,
+      ),
+      child: const Center(child: CircularProgressIndicator()),
+    );
+  }
+}
+
+class _VendorProgressCard extends StatelessWidget {
+  final VendorDashboard dashboard;
+
+  const _VendorProgressCard({required this.dashboard});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final progress = dashboard.todayTarget <= 0
+        ? 0.0
+        : (dashboard.todayXp / dashboard.todayTarget).clamp(0.0, 1.0);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.18)),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+            color: Colors.black.withValues(alpha: 0.06),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _TopBadge(
+                icon: Icons.workspace_premium_rounded,
+                text: 'Level ${dashboard.vendorLevel}',
+              ),
+              const SizedBox(width: 8),
+              _TopBadge(
+                icon: Icons.local_fire_department_rounded,
+                text: '${dashboard.currentStreak}d streak',
+              ),
+              const Spacer(),
+              Text(
+                'Score ${dashboard.vendorScore.toStringAsFixed(1)}',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(
+            '${dashboard.todayXp} / ${dashboard.todayTarget} XP today',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(value: progress, minHeight: 12),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            dashboard.todayXp >= (dashboard.todayTarget * 0.5)
+                ? 'Streak safe for today. Keep going to hit the full target.'
+                : 'Reach 50% of today’s target to protect your streak.',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _MiniMetric(title: 'Total XP', value: '${dashboard.totalXp}'),
+              _MiniMetric(
+                title: 'Best Streak',
+                value: '${dashboard.bestStreak} d',
+              ),
+              _MiniMetric(
+                title: 'Consistency',
+                value:
+                    '${dashboard.breakdown.consistencyScore.toStringAsFixed(0)}%',
+              ),
+              _MiniMetric(
+                title: 'Mastery',
+                value:
+                    '${dashboard.breakdown.masteryScore.toStringAsFixed(0)}%',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TopBadge extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _TopBadge({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: theme.colorScheme.primary),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MiniMetric extends StatelessWidget {
+  final String title;
+  final String value;
+
+  const _MiniMetric({required this.title, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: 140,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: theme.textTheme.labelMedium),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SegmentedTabs extends StatelessWidget {
+  final String leftText;
+  final String rightText;
+  final int index;
+  final ValueChanged<int> onChanged;
+
+  const _SegmentedTabs({
+    required this.leftText,
+    required this.rightText,
+    required this.index,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.12),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _SegButton(
+              text: leftText,
+              selected: index == 0,
+              onTap: () => onChanged(0),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: _SegButton(
+              text: rightText,
+              selected: index == 1,
+              onTap: () => onChanged(1),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SegButton extends StatelessWidget {
+  final String text;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _SegButton({
+    required this.text,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(999),
+      onTap: onTap,
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? theme.colorScheme.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Text(
+          text,
+          style: theme.textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: selected ? Colors.white : theme.colorScheme.primary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DailyTaskTile extends StatelessWidget {
   final TaskDefinition task;
+  final String subtitle;
+  final String rightText;
+  final bool isCoolingDown;
   final VoidCallback onTap;
   final VoidCallback onLongPressDone;
 
-  const _ActivatedSimpleTile({
+  const _DailyTaskTile({
     required this.task,
+    required this.subtitle,
+    required this.rightText,
+    required this.isCoolingDown,
     required this.onTap,
     required this.onLongPressDone,
   });
@@ -202,49 +661,214 @@ class _ActivatedSimpleTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return GestureDetector(
-      onTap: onTap,
-      onLongPress: onLongPressDone,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.18)),
-        ),
-        child: Row(
-          children: [
-            Icon(task.icon, size: 32, color: theme.colorScheme.primary),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                task.name,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w900,
+    final rightColor = isCoolingDown
+        ? Colors.orange.shade800
+        : theme.colorScheme.primary;
+
+    final iconColor = isCoolingDown
+        ? Colors.orange.shade800
+        : theme.colorScheme.primary;
+
+    final iconBg = isCoolingDown
+        ? Colors.orange.withValues(alpha: 0.12)
+        : theme.colorScheme.primary.withValues(alpha: 0.12);
+
+    return Material(
+      color: theme.cardColor,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        onLongPress: onLongPressDone,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  isCoolingDown ? Icons.timer_rounded : task.icon,
+                  color: iconColor,
                 ),
               ),
-            ),
-            const Icon(Icons.check_circle_outline_rounded),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      task.name,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(subtitle),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    rightText,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: rightColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: theme.textTheme.bodySmall?.color?.withValues(
+                      alpha: 0.7,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _CreateTaskPlaceholder extends StatelessWidget {
-  const _CreateTaskPlaceholder();
+class _AllTaskTile extends StatelessWidget {
+  final TaskDefinition task;
+  final bool active;
+  final String subtitle;
+  final String rightText;
+  final VoidCallback onTap;
+
+  const _AllTaskTile({
+    required this.task,
+    required this.active,
+    required this.subtitle,
+    required this.rightText,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: const [
-        ListTile(
-          leading: Icon(Icons.add_circle_outline),
-          title: Text('Create new task (coming soon)'),
-          subtitle: Text('You will be able to make your own hygiene tasks.'),
+    final theme = Theme.of(context);
+
+    return Material(
+      color: theme.cardColor,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(task.icon, color: theme.colorScheme.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            task.name,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                        if (active)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withValues(alpha: 0.10),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              'Active',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: Colors.green.shade700,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(subtitle),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                rightText,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
         ),
-      ],
+      ),
+    );
+  }
+}
+
+class _SuggestCard extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _SuggestCard({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Material(
+      color: theme.colorScheme.primary.withValues(alpha: 0.06),
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Icon(
+                Icons.add_circle_outline_rounded,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Suggest a new hygiene task',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

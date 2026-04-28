@@ -1,15 +1,15 @@
 import 'dart:async';
+
+import 'package:drift/drift.dart' show InsertMode, Value;
 import 'package:flutter/material.dart';
-import 'package:drift/drift.dart' show Value, InsertMode;
-import 'package:hygiene_v_1/main.dart' show appDb;
 import 'package:hygiene_v_1/core/local_db/drift_db.dart'
     show ShopStateCompanion;
-import 'package:hygiene_v_1/features/tasks/data/task_repository.dart';
 import 'package:hygiene_v_1/features/home/widgets/shop_score.dart';
-
-// Keep this only if you still want the test write button.
-// Remove later.
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hygiene_v_1/features/home/widgets/streak_status_card.dart';
+import 'package:hygiene_v_1/features/tasks/data/task_repository.dart';
+import 'package:hygiene_v_1/features/vendor/data/vendor_repository.dart';
+import 'package:hygiene_v_1/features/vendor/domain/vendor_models.dart';
+import 'package:hygiene_v_1/main.dart' show appDb;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,22 +19,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final TaskRepository _repo = TaskRepository(appDb);
-  double _todayProgressPercent =
-      40; // changes during the day (avg of active tasks today)
-  double _overallHygieneScorePercent =
-      70; // slower score (e.g., last 14 days / last synced)
+  final TaskRepository _taskRepo = TaskRepository(appDb);
+  final VendorRepository _vendorRepo = VendorRepository(appDb);
 
   bool _isOpen = false;
   DateTime? _openedAt;
   Timer? _ticker;
+  VendorDashboard? _dashboard;
+  int _activeTaskCount = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadShopState();
-    _loadTodayProgress();
-    _loadOverallHygieneScore();
+    _loadAll();
   }
 
   @override
@@ -43,24 +40,33 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  Future<void> _loadTodayProgress() async {
-    // Phase 1: dummy
-    // Later: compute offline from local DB (active tasks compliance avg for TODAY)
-    setState(() => _todayProgressPercent = 65);
+  Future<void> _loadAll() async {
+    await _loadShopState();
+    await _loadDashboard();
+    await _loadActiveTasks();
   }
 
-  Future<void> _loadOverallHygieneScore() async {
-    // Phase 1: dummy (or last known from local storage)
-    // Later: compute offline rolling score OR load last synced score
-    setState(() => _overallHygieneScorePercent = 50);
+  Future<void> _loadDashboard() async {
+    final dashboard = await _vendorRepo.getDashboard();
+    if (!mounted) return;
+    setState(() {
+      _dashboard = dashboard;
+    });
+  }
+
+  Future<void> _loadActiveTasks() async {
+    final tasks = await _taskRepo.getActiveTasks();
+    if (!mounted) return;
+    setState(() {
+      _activeTaskCount = tasks.length;
+    });
   }
 
   Future<void> _loadShopState() async {
-    // ensure singleton row exists (safe no-op if it already exists)
     await appDb
         .into(appDb.shopState)
         .insert(
-          ShopStateCompanion.insert(id: Value(0)),
+          ShopStateCompanion.insert(id: const Value(0)),
           mode: InsertMode.insertOrIgnore,
         );
 
@@ -85,7 +91,6 @@ class _HomePageState extends State<HomePage> {
     _ticker?.cancel();
 
     if (_isOpen && _openedAt != null) {
-      // Update UI every second for the counter.
       _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
         if (mounted) setState(() {});
       });
@@ -94,11 +99,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _toggleShop() async {
     final next = !_isOpen;
-
-    await _repo.setShopOpen(next);
-
-    // reload from DB so UI is always consistent
-    await _loadShopState();
+    await _taskRepo.setShopOpen(next);
+    await _loadAll();
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -119,124 +121,228 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final Duration openFor = (_isOpen && _openedAt != null)
+    final openFor = (_isOpen && _openedAt != null)
         ? DateTime.now().difference(_openedAt!)
         : Duration.zero;
 
+    final dashboard = _dashboard;
+
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _toggleShop,
         backgroundColor: _isOpen ? Colors.green : Colors.red,
-        child: Icon(_isOpen ? Icons.store : Icons.store_outlined),
+        icon: Icon(_isOpen ? Icons.store : Icons.store_outlined),
+        label: Text(_isOpen ? 'Close Shop' : 'Open Shop'),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: RefreshIndicator(
+          onRefresh: _loadAll,
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             children: [
-              // Header row
               Row(
                 children: [
                   Text(
-                    'My ',
-                    style: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
+                    'My Home',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                  const Text('Home', style: TextStyle(fontSize: 28)),
                   const Spacer(),
+                  Icon(
+                    _isOpen ? Icons.circle : Icons.circle_outlined,
+                    size: 14,
+                    color: _isOpen ? Colors.green : Colors.red,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _isOpen ? 'Open' : 'Closed',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ],
               ),
+              const SizedBox(height: 18),
 
-              const SizedBox(height: 24),
-
-              // Card
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: theme.dividerColor.withValues(alpha: 0.2),
+              if (dashboard == null)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: theme.dividerColor.withValues(alpha: 0.18),
+                    ),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 12,
-                      spreadRadius: 0,
-                      offset: const Offset(0, 6),
-                      color: Colors.black.withValues(alpha: 0.06),
+                  child: const Center(child: CircularProgressIndicator()),
+                )
+              else ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: theme.dividerColor.withValues(alpha: 0.18),
                     ),
-                  ],
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                        color: Colors.black.withValues(alpha: 0.06),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _isOpen ? 'Welcome back 👋' : 'Welcome 👋',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        _isOpen
+                            ? 'Your hygiene progress is being tracked while the shop is open.'
+                            : 'Open your shop to begin tracking today’s hygiene progress.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.textTheme.bodyMedium?.color?.withValues(
+                            alpha: 0.75,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      HygieneScoreSummary(
+                        vendorScore: dashboard.vendorScore,
+                        vendorLevel: dashboard.vendorLevel,
+                        totalXp: dashboard.totalXp,
+                        todayXp: dashboard.todayXp,
+                        todayTarget: dashboard.todayTarget,
+                        currentStreak: dashboard.currentStreak,
+                        bestStreak: dashboard.bestStreak,
+                      ),
+                      const SizedBox(height: 18),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          _MetricTile(
+                            icon: Icons.task_alt_rounded,
+                            title: 'Active Tasks',
+                            value: '$_activeTaskCount',
+                          ),
+                          _MetricTile(
+                            icon: Icons.flag_rounded,
+                            title: 'Today Target',
+                            value: '${dashboard.todayTarget} XP',
+                          ),
+                          _MetricTile(
+                            icon: Icons.insights_rounded,
+                            title: 'Consistency',
+                            value:
+                                '${dashboard.breakdown.consistencyScore.toStringAsFixed(0)}%',
+                          ),
+                          _MetricTile(
+                            icon: Icons.auto_graph_rounded,
+                            title: 'Performance',
+                            value:
+                                '${dashboard.breakdown.performanceScore.toStringAsFixed(0)}%',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 18),
+                      Text(
+                        'Open for',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.textTheme.bodyMedium?.color?.withValues(
+                            alpha: 0.70,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        _isOpen ? _formatDuration(openFor) : '00:00:00',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _isOpen ? 'Welcome back 👋' : 'Welcome 👋',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _isOpen
-                          ? 'Your shop is currently open.'
-                          : 'Tap the button to open your shop.',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.textTheme.bodyMedium?.color?.withValues(
-                          alpha: 0.75,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
 
-                    HygieneScoreSummary(
-                      todayPercent: _todayProgressPercent,
-                      overallPercent: _overallHygieneScorePercent,
-                    ),
+                const SizedBox(height: 16),
 
-                    SizedBox(height: 10),
-
-                    Text(
-                      'Open for',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.textTheme.bodyMedium?.color?.withValues(
-                          alpha: 0.7,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      _isOpen ? _formatDuration(openFor) : '00:00:00',
-                      style: theme.textTheme.displaySmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Icon(
-                          _isOpen ? Icons.circle : Icons.circle_outlined,
-                          size: 14,
-                          color: _isOpen ? Colors.green : Colors.red,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          _isOpen ? 'Status: Open' : 'Status: Closed',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                  ],
+                StreakStatusCard(
+                  currentStreak: dashboard.currentStreak,
+                  bestStreak: dashboard.bestStreak,
+                  todayXp: dashboard.todayXp,
+                  todayTarget: dashboard.todayTarget,
                 ),
-              ),
+              ],
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _MetricTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String value;
+
+  const _MetricTile({
+    required this.icon,
+    required this.title,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      width: 155,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.10),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: theme.colorScheme.primary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

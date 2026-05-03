@@ -296,7 +296,7 @@ class _TasksPageState extends State<TasksPage> {
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(18, 0, 18, 30),
                   itemCount: _tabIndex == 0 ? tasks.length + 1 : tasks.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     if (_tabIndex == 0 && index == tasks.length) {
                       return _SuggestCard(

@@ -15,6 +15,12 @@ class VendorDailyStats extends Table {
   BoolColumn get hitFullTargetFlag =>
       boolean().withDefault(const Constant(false))();
 
+  BoolColumn get notified30 => boolean().withDefault(const Constant(false))();
+
+  BoolColumn get notified70 => boolean().withDefault(const Constant(false))();
+
+  BoolColumn get notified100 => boolean().withDefault(const Constant(false))();
+
   IntColumn get createdAtMs => integer().withDefault(const Constant(0))();
 
   IntColumn get updatedAtMs => integer().withDefault(const Constant(0))();

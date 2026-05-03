@@ -10,7 +10,7 @@ const builtInTasks = <TaskDefinition>[
     category: TaskCategory.personalHygiene,
     kind: TaskKind.repeatable,
     mediaAsset: null,
-    minGapMinutes: 10,
+    minGapMinutes: 1,
     dailyCap: 80,
     requiresShopOpen: true,
     isCritical: true,

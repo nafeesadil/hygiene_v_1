@@ -4,6 +4,7 @@ import 'package:hygiene_v_1/features/tasks/domain/built_in_tasks.dart';
 import 'package:hygiene_v_1/features/tasks/domain/task_definition.dart';
 import 'package:hygiene_v_1/features/tasks/domain/task_rules.dart';
 import 'package:hygiene_v_1/features/vendor/data/vendor_repository.dart';
+import 'package:hygiene_v_1/features/shared/application/notification_service.dart';
 
 enum MarkDoneStatus {
   success,
@@ -120,6 +121,8 @@ class TaskRepository {
 
     if (open) {
       await VendorRepository(_db).markShopOpenedToday();
+    } else {
+      await NotificationService.instance.cancelAllTaskCooldownNotifications();
     }
   }
 

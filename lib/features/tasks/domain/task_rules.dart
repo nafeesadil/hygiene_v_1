@@ -17,21 +17,9 @@ int taskEffectiveDailyCap(TaskDefinition def, int level) {
   return cap < target ? target : cap;
 }
 
-// Duration taskCooldownFor(TaskDefinition def) {
-//   final minutes = def.minGapMinutes ?? 0;
-//   return Duration(minutes: minutes);
-// }
-
 Duration taskCooldownFor(TaskDefinition def) {
   final minutes = def.minGapMinutes ?? 0;
-
-  // TEMPORARY TEST MODE:
-  // Any task that normally has a cooldown will use 10 seconds instead.
-  if (minutes > 0) {
-    return const Duration(seconds: 10);
-  }
-
-  return Duration.zero;
+  return Duration(minutes: minutes);
 }
 
 int taskXpForCompletion(TaskDefinition def, int level) {

@@ -3,6 +3,7 @@ import 'package:hygiene_v_1/core/local_db/drift_db.dart';
 import 'package:hygiene_v_1/features/vendor/domain/vendor_models.dart';
 import 'package:hygiene_v_1/features/vendor/domain/vendor_progress_rules.dart';
 import 'package:hygiene_v_1/features/vendor/domain/vendor_score_rules.dart';
+import 'package:hygiene_v_1/features/shared/application/notification_service.dart';
 
 class VendorRepository {
   final AppDb _db;
@@ -42,12 +43,6 @@ class VendorRepository {
   }
 
   Future<void> ensureSeeded() async {
-    final row = await (_db.select(
-      _db.vendorState,
-    )..where((t) => t.id.equals(0))).getSingleOrNull();
-
-    if (row != null) return;
-
     await _db
         .into(_db.vendorState)
         .insert(
@@ -55,6 +50,7 @@ class VendorRepository {
             id: const Value(0),
             updatedAtMs: Value(DateTime.now().millisecondsSinceEpoch),
           ),
+          mode: InsertMode.insertOrIgnore,
         );
   }
 
@@ -120,9 +116,25 @@ class VendorRepository {
         targetXp: todayTarget,
       );
 
+      final oldDailyXp = daily.earnedXp;
       final newDailyXp = daily.earnedXp + earnedXp;
       final halfHit = hitHalfTarget(newDailyXp, daily.targetXp);
       final fullHit = hitFullTarget(newDailyXp, daily.targetXp);
+
+      final crossed30 =
+          oldDailyXp < (daily.targetXp * 0.30) &&
+          newDailyXp >= (daily.targetXp * 0.30) &&
+          !daily.notified30;
+
+      final crossed70 =
+          oldDailyXp < (daily.targetXp * 0.70) &&
+          newDailyXp >= (daily.targetXp * 0.70) &&
+          !daily.notified70;
+
+      final crossed100 =
+          oldDailyXp < daily.targetXp &&
+          newDailyXp >= daily.targetXp &&
+          !daily.notified100;
 
       await (_db.update(
         _db.vendorDailyStats,
@@ -131,9 +143,36 @@ class VendorRepository {
           earnedXp: Value(newDailyXp),
           hitHalfTargetFlag: Value(halfHit),
           hitFullTargetFlag: Value(fullHit),
+          notified30: Value(daily.notified30 || crossed30),
+          notified70: Value(daily.notified70 || crossed70),
+          notified100: Value(daily.notified100 || crossed100),
           updatedAtMs: Value(now.millisecondsSinceEpoch),
         ),
       );
+
+      if (crossed30) {
+        await NotificationService.instance.showDailyProgressMilestone(
+          percent: 30,
+          todayXp: newDailyXp,
+          targetXp: daily.targetXp,
+        );
+      }
+
+      if (crossed70) {
+        await NotificationService.instance.showDailyProgressMilestone(
+          percent: 70,
+          todayXp: newDailyXp,
+          targetXp: daily.targetXp,
+        );
+      }
+
+      if (crossed100) {
+        await NotificationService.instance.showDailyProgressMilestone(
+          percent: 100,
+          todayXp: newDailyXp,
+          targetXp: daily.targetXp,
+        );
+      }
 
       final newTotalXp = state.totalXp + earnedXp;
       final newLevel = vendorLevelFromXp(newTotalXp);

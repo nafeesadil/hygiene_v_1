@@ -6,6 +6,7 @@ import 'package:hygiene_v_1/app/vendor_shell.dart';
 import 'package:hygiene_v_1/theme/app_theme.dart';
 
 import 'package:hygiene_v_1/core/local_db/drift_db.dart';
+import 'package:hygiene_v_1/features/shared/application/notification_service.dart';
 import 'package:hygiene_v_1/features/tasks/data/task_repository.dart';
 
 late final AppDb appDb;
@@ -13,6 +14,13 @@ late final AppDb appDb;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await NotificationService.instance.init();
+  await NotificationService.instance.showGeneral(
+    title: 'Hygia test',
+    body: 'Notifications are working.',
+  );
+  await NotificationService.instance.scheduleDailyTips();
 
   appDb = AppDb();
   await TaskRepository(appDb).ensureSeeded();

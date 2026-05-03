@@ -5,8 +5,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../features/tasks/data/drift/tasks_tables.dart';
 import '../../features/tasks/data/drift/shop_state_table.dart';
-import 'package:hygiene_v_1/features/tasks/data/drift/shop_state_table.dart';
-import 'package:hygiene_v_1/features/tasks/data/drift/tasks_tables.dart';
 import 'package:hygiene_v_1/features/vendor/data/drift/vendor_daily_stats_table.dart';
 import 'package:hygiene_v_1/features/vendor/data/drift/vendor_state_table.dart';
 
@@ -28,7 +26,7 @@ class AppDb extends _$AppDb {
   AppDb() : super(_openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 }
 
 LazyDatabase _openConnection() {

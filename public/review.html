@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hygia Review</title>
+
+  <style>
+    :root {
+      --primary: #1BA6A6;
+      --bg: #F6F7F2;
+      --card: #FFFFFF;
+      --text: #13191F;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+      --danger: #EF4444;
+      --success: #22C55E;
+      --star: #F59E0B;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 22px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .brand {
+      text-align: center;
+      color: var(--primary);
+      font-weight: 900;
+      font-size: 28px;
+      margin: 10px 0 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.08);
+      border: 1px solid var(--border);
+    }
+
+    .vendor-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: rgba(27,166,166,.12);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-size: 34px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.1;
+    }
+
+    .sub {
+      margin: 8px 0 20px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin: 18px 0 8px;
+    }
+
+    .stars {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .star {
+      border: 0;
+      background: rgba(245,158,11,.12);
+      color: var(--star);
+      border-radius: 14px;
+      width: 48px;
+      height: 48px;
+      font-size: 28px;
+      cursor: pointer;
+    }
+
+    .star.selected {
+      background: var(--star);
+      color: white;
+    }
+
+    textarea,
+    input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      font-size: 16px;
+      outline: none;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      border: 1px solid rgba(27,166,166,.25);
+      background: rgba(27,166,166,.08);
+      color: var(--primary);
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tag.selected {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn {
+      width: 100%;
+      margin-top: 22px;
+      border: 0;
+      border-radius: 18px;
+      padding: 15px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      color: white;
+      background: var(--primary);
+      cursor: pointer;
+    }
+
+    .btn:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      display: none;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .message.error {
+      display: block;
+      background: rgba(239,68,68,.10);
+      color: var(--danger);
+    }
+
+    .message.success {
+      display: block;
+      background: rgba(34,197,94,.12);
+      color: #15803D;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <div class="brand">Hygia</div>
+
+    <section class="card">
+      <div class="vendor-icon">🏪</div>
+
+      <h1 id="vendorTitle">Leave a review</h1>
+      <p class="sub" id="vendorSubtitle">
+        Rate this vendor’s hygiene and share short feedback.
+      </p>
+
+      <label>Rating</label>
+      <div class="stars" id="stars">
+        <button class="star" data-value="1">★</button>
+        <button class="star" data-value="2">★</button>
+        <button class="star" data-value="3">★</button>
+        <button class="star" data-value="4">★</button>
+        <button class="star" data-value="5">★</button>
+      </div>
+
+      <label for="comment">Comment</label>
+      <textarea id="comment" placeholder="Example: The stall looked clean and the vendor handled food carefully."></textarea>
+
+      <label>What did you notice?</label>
+      <div class="tags">
+        <span class="tag" data-tag="clean_stall">Clean stall</span>
+        <span class="tag" data-tag="safe_food_handling">Safe food handling</span>
+        <span class="tag" data-tag="clean_utensils">Clean utensils</span>
+        <span class="tag" data-tag="covered_food">Covered food</span>
+        <span class="tag" data-tag="proper_waste_disposal">Waste disposal</span>
+      </div>
+
+      <label for="customerName">Name optional</label>
+      <input id="customerName" placeholder="Anonymous Customer" />
+
+      <button class="btn" id="submitBtn">Submit Review</button>
+
+      <div id="message" class="message"></div>
+
+      <p class="small">
+        Your feedback helps customers identify safer street food vendors and helps vendors improve hygiene practices.
+      </p>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      collection,
+      addDoc,
+      runTransaction,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    // Replace this with your Firebase Web config from Firebase Console.
+  const firebaseConfig = {
+  apiKey: "AIzaSyAOTlkwOMxk6PNlTitFSyRDVYS7Jhzb48o",
+  authDomain: "hygia-9f3bd.firebaseapp.com",
+  projectId: "hygia-9f3bd",
+  storageBucket: "hygia-9f3bd.firebasestorage.app",
+  messagingSenderId: "133140867893",
+  appId: "1:133140867893:web:548884ef2faa0cc71a3a7c"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const vendorId = params.get("vendorId");
+
+    const vendorTitle = document.getElementById("vendorTitle");
+    const vendorSubtitle = document.getElementById("vendorSubtitle");
+    const stars = document.querySelectorAll(".star");
+    const tags = document.querySelectorAll(".tag");
+    const commentEl = document.getElementById("comment");
+    const customerNameEl = document.getElementById("customerName");
+    const submitBtn = document.getElementById("submitBtn");
+    const messageEl = document.getElementById("message");
+
+    let rating = 0;
+    const selectedTags = new Set();
+
+    function showMessage(text, type) {
+      messageEl.textContent = text;
+      messageEl.className = "message " + type;
+    }
+
+    function updateStars() {
+      stars.forEach((star) => {
+        const value = Number(star.dataset.value);
+        star.classList.toggle("selected", value <= rating);
+      });
+    }
+
+    stars.forEach((star) => {
+      star.addEventListener("click", () => {
+        rating = Number(star.dataset.value);
+        updateStars();
+      });
+    });
+
+    tags.forEach((tag) => {
+      tag.addEventListener("click", () => {
+        const value = tag.dataset.tag;
+        if (selectedTags.has(value)) {
+          selectedTags.delete(value);
+          tag.classList.remove("selected");
+        } else {
+          selectedTags.add(value);
+          tag.classList.add("selected");
+        }
+      });
+    });
+
+    async function loadVendor() {
+      if (!vendorId) {
+        submitBtn.disabled = true;
+        showMessage("Invalid QR code. Vendor ID is missing.", "error");
+        return;
+      }
+
+      const vendorDoc = await getDoc(doc(db, "vendors", vendorId));
+
+      if (!vendorDoc.exists()) {
+        vendorTitle.textContent = "Vendor not found";
+        vendorSubtitle.textContent = "The QR code is valid, but the vendor profile could not be found.";
+        submitBtn.disabled = true;
+        return;
+      }
+
+      const vendor = vendorDoc.data();
+      const shopName = vendor.shopName || "this vendor";
+      const foodCategory = vendor.foodCategory || "street food";
+
+      vendorTitle.textContent = `Review ${shopName}`;
+      vendorSubtitle.textContent = `Rate the hygiene experience for ${foodCategory}.`;
+    }
+
+    async function submitReview() {
+      if (!vendorId) {
+        showMessage("Invalid QR code. Vendor ID is missing.", "error");
+        return;
+      }
+
+      const comment = commentEl.value.trim();
+      const customerName = customerNameEl.value.trim() || "Anonymous Customer";
+
+      if (rating < 1 || rating > 5) {
+        showMessage("Please select a rating from 1 to 5.", "error");
+        return;
+      }
+
+      if (comment.length < 5) {
+        showMessage("Please write a short comment.", "error");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting...";
+
+      try {
+        await addDoc(collection(db, "reviews"), {
+          vendorId,
+          rating,
+          comment,
+          hygieneTags: Array.from(selectedTags),
+          customerName,
+          isAnonymous: customerName === "Anonymous Customer",
+          source: "qr_scan",
+          status: "visible",
+          createdAt: serverTimestamp(),
+          createdAtMs: Date.now()
+        });
+
+        const summaryRef = doc(db, "vendor_rating_summaries", vendorId);
+
+        await runTransaction(db, async (transaction) => {
+          const summarySnap = await transaction.get(summaryRef);
+          const previous = summarySnap.exists() ? summarySnap.data() : {};
+
+          const oldCount = Number(previous.reviewCount || 0);
+          const oldAverage = Number(previous.averageRating || 0);
+          const newCount = oldCount + 1;
+          const newAverage = ((oldAverage * oldCount) + rating) / newCount;
+
+          const ratingKey = `rating${rating}Count`;
+          const oldRatingCount = Number(previous[ratingKey] || 0);
+
+          transaction.set(summaryRef, {
+            vendorId,
+            averageRating: newAverage,
+            reviewCount: newCount,
+            rating1Count: Number(previous.rating1Count || 0),
+            rating2Count: Number(previous.rating2Count || 0),
+            rating3Count: Number(previous.rating3Count || 0),
+            rating4Count: Number(previous.rating4Count || 0),
+            rating5Count: Number(previous.rating5Count || 0),
+            [ratingKey]: oldRatingCount + 1,
+            lastReviewComment: comment,
+            lastReviewAt: serverTimestamp(),
+            lastReviewAtMs: Date.now(),
+            updatedAt: serverTimestamp(),
+            updatedAtMs: Date.now()
+          }, { merge: true });
+        });
+
+        showMessage("Thank you! Your review has been submitted.", "success");
+        commentEl.value = "";
+        customerNameEl.value = "";
+        rating = 0;
+        selectedTags.clear();
+        updateStars();
+        tags.forEach(tag => tag.classList.remove("selected"));
+      } catch (error) {
+        console.error(error);
+        showMessage("Could not submit review. Please try again.", "error");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Review";
+      }
+    }
+
+    submitBtn.addEventListener("click", submitReview);
+    loadVendor();
+  </script>
+</body>
+</html>

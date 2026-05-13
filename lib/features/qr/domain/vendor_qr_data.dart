@@ -1,4 +1,6 @@
 class VendorQrData {
+  static const String reviewBaseUrl = 'https://hygia-9f3bd.web.app/review.html';
+
   final String vendorId;
   final String vendorName;
   final String reviewUrl;
@@ -9,15 +11,25 @@ class VendorQrData {
     required this.reviewUrl,
   });
 
-  factory VendorQrData.mock() {
-    const vendorId = 'vendor_karim_001';
-    const vendorName = "Karim's Jhalmuri";
-    const reviewBaseUrl = 'https://hygia.app/review';
+  factory VendorQrData.fromVendorProfile({
+    required String vendorId,
+    required String vendorName,
+    required String savedReviewUrl,
+  }) {
+    final cleanSavedUrl = savedReviewUrl.trim();
 
-    return const VendorQrData(
+    final reviewUrl = cleanSavedUrl.contains('hygia-9f3bd.web.app/review.html')
+        ? cleanSavedUrl
+        : buildReviewUrl(vendorId);
+
+    return VendorQrData(
       vendorId: vendorId,
       vendorName: vendorName,
-      reviewUrl: '$reviewBaseUrl?vendorId=$vendorId',
+      reviewUrl: reviewUrl,
     );
+  }
+
+  static String buildReviewUrl(String vendorId) {
+    return '$reviewBaseUrl?vendorId=$vendorId';
   }
 }

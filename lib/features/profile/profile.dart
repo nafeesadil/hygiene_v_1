@@ -3,6 +3,9 @@ import 'package:hygiene_v_1/generated/l10n/app_localizations.dart';
 import 'package:hygiene_v_1/features/vendor/data/vendor_repository.dart';
 import 'package:hygiene_v_1/features/vendor/domain/vendor_models.dart';
 import 'package:hygiene_v_1/main.dart' show appDb, appSettings;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hygiene_v_1/features/auth/presentation/auth_gate.dart';
+import 'package:hygiene_v_1/features/vendor/data/local_vendor_profile_repository.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -13,7 +16,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final VendorRepository _vendorRepo = VendorRepository(appDb);
-
+  final LocalVendorProfileRepository _localVendorProfileRepo =
+      LocalVendorProfileRepository(appDb);
   VendorDashboard? _dashboard;
 
   @override
@@ -26,6 +30,42 @@ class _ProfilePageState extends State<ProfilePage> {
     final dashboard = await _vendorRepo.getDashboard();
     if (!mounted) return;
     setState(() => _dashboard = dashboard);
+  }
+
+  Future<void> _signOut() async {
+    final shouldSignOut = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Sign out?'),
+          content: const Text(
+            'You will be signed out of this vendor account on this device.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Sign out'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldSignOut != true) return;
+
+    await FirebaseAuth.instance.signOut();
+    await _localVendorProfileRepo.clearLocalProfile();
+
+    if (!mounted) return;
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const AuthGate()),
+      (route) => false,
+    );
   }
 
   Future<void> _showLanguageSheet() async {
@@ -194,6 +234,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     value: l10n.newLabel,
                     badge: true,
                     onTap: () {},
+                  ),
+
+                  _SettingsRow(
+                    icon: Icons.logout_rounded,
+                    title: 'Sign out',
+                    value: '',
+                    onTap: _signOut,
                   ),
                 ],
               ),

@@ -52,7 +52,8 @@ class _VendorRegistrationPageState extends State<VendorRegistrationPage> {
         phoneNumber: _phoneCtrl.text,
         preferredLanguage: appSettings.localeCode,
         createVendorProfile: (uid) {
-          final reviewUrl = 'https://hygia.app/review?vendorId=$uid';
+          final reviewUrl =
+              'https://hygia-9f3bd.web.app/review.html?vendorId=$uid';
 
           createdVendorProfile = VendorProfileModel(
             vendorId: uid,

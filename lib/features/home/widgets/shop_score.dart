@@ -26,75 +26,169 @@ class HygieneScoreSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     final todayPercent = todayTarget <= 0 ? 0 : (todayXp / todayTarget) * 100;
     final safeTodayPercent = todayPercent.clamp(0, 100).toDouble();
     final safeVendorScore = vendorScore.clamp(0, 100).toDouble();
 
+    const xpPerLevel = 1000;
+    final xpIntoCurrentLevel = totalXp % xpPerLevel;
+    final xpToNextLevel = xpPerLevel - xpIntoCurrentLevel;
+    final levelProgress = xpIntoCurrentLevel / xpPerLevel;
+
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: onTap,
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          OverallProgressGauge(
-            percent: safeTodayPercent,
-            centerLabel: '$todayXp\n/ $todayTarget XP',
-            bottomLabel: 'Today',
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Vendor Score',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              OverallProgressGauge(
+                percent: safeTodayPercent,
+                centerLabel: '$todayXp\n/ $todayTarget XP',
+                bottomLabel: 'Today',
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.verified_rounded,
-                      color: theme.colorScheme.primary,
-                      size: 32,
-                    ),
-                    const SizedBox(width: 8),
                     Text(
-                      safeVendorScore.toStringAsFixed(0),
-                      style: theme.textTheme.headlineMedium?.copyWith(
+                      'Vendor Score',
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: Text(
-                        ' / 100',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: theme.textTheme.bodyMedium?.color?.withValues(
-                            alpha: 0.65,
+                    const SizedBox(height: 8),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Icon(
+                          Icons.verified_rounded,
+                          color: theme.colorScheme.primary,
+                          size: 34,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          safeVendorScore.toStringAsFixed(0),
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: Text(
+                            ' / 100',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: theme.textTheme.bodyMedium?.color
+                                  ?.withValues(alpha: 0.65),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 10),
+                    _ScoreBadge(percent: safeVendorScore),
                   ],
                 ),
-                const SizedBox(height: 10),
-                _ScoreBadge(percent: safeVendorScore),
-                const SizedBox(height: 12),
-                Text(
-                  'Your vendor score is calculated from consistency, daily performance, and task mastery.',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.textTheme.bodySmall?.color?.withValues(
-                      alpha: 0.70,
-                    ),
-                    height: 1.3,
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          _VendorLevelProgress(
+            vendorLevel: vendorLevel,
+            xpIntoCurrentLevel: xpIntoCurrentLevel,
+            xpPerLevel: xpPerLevel,
+            xpToNextLevel: xpToNextLevel,
+            progress: levelProgress,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _VendorLevelProgress extends StatelessWidget {
+  final int vendorLevel;
+  final int xpIntoCurrentLevel;
+  final int xpPerLevel;
+  final int xpToNextLevel;
+  final double progress;
+
+  const _VendorLevelProgress({
+    required this.vendorLevel,
+    required this.xpIntoCurrentLevel,
+    required this.xpPerLevel,
+    required this.xpToNextLevel,
+    required this.progress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final nextLevel = vendorLevel + 1;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.10),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: theme.colorScheme.primary.withValues(
+                  alpha: 0.14,
+                ),
+                child: Icon(
+                  Icons.workspace_premium_rounded,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Vendor Level $vendorLevel',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
-              ],
+              ),
+              Text(
+                '$xpIntoCurrentLevel / $xpPerLevel XP',
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: progress.clamp(0.0, 1.0),
+              minHeight: 10,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '$xpToNextLevel XP needed to reach Level $nextLevel.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.70),
             ),
           ),
         ],

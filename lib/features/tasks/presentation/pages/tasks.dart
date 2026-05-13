@@ -402,18 +402,20 @@ class _VendorProgressCard extends StatelessWidget {
         ? 0.0
         : (dashboard.todayXp / dashboard.todayTarget).clamp(0.0, 1.0);
 
+    final streakSafe = dashboard.todayXp >= (dashboard.todayTarget * 0.5);
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: theme.dividerColor.withValues(alpha: 0.18)),
         boxShadow: [
           BoxShadow(
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+            color: Colors.black.withValues(alpha: 0.05),
           ),
         ],
       ),
@@ -422,27 +424,38 @@ class _VendorProgressCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              _TopBadge(
-                icon: Icons.workspace_premium_rounded,
-                text: 'Level ${dashboard.vendorLevel}',
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: theme.colorScheme.primary.withValues(
+                  alpha: 0.12,
+                ),
+                child: Icon(
+                  Icons.workspace_premium_rounded,
+                  color: theme.colorScheme.primary,
+                  size: 22,
+                ),
               ),
-              const SizedBox(width: 8),
-              _TopBadge(
-                icon: Icons.local_fire_department_rounded,
-                text: '${dashboard.currentStreak}d streak',
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Today’s Progress',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
               ),
-              const Spacer(),
               Text(
-                'Score ${dashboard.vendorScore.toStringAsFixed(1)}',
-                style: theme.textTheme.titleMedium?.copyWith(
+                'Score ${dashboard.vendorScore.toStringAsFixed(0)}',
+                style: theme.textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.w900,
+                  color: theme.colorScheme.primary,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
           Text(
-            '${dashboard.todayXp} / ${dashboard.todayTarget} XP today',
+            '${dashboard.todayXp} / ${dashboard.todayTarget} XP',
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w900,
             ),
@@ -450,38 +463,19 @@ class _VendorProgressCard extends StatelessWidget {
           const SizedBox(height: 10),
           ClipRRect(
             borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(value: progress, minHeight: 12),
+            child: LinearProgressIndicator(value: progress, minHeight: 11),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Text(
-            dashboard.todayXp >= (dashboard.todayTarget * 0.5)
-                ? 'Streak safe for today. Keep going to hit the full target.'
+            streakSafe
+                ? 'Streak protected today. Keep going to complete the full target.'
                 : 'Reach 50% of today’s target to protect your streak.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: streakSafe
+                  ? Colors.green.shade700
+                  : Colors.orange.shade800,
             ),
-          ),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: [
-              _MiniMetric(title: 'Total XP', value: '${dashboard.totalXp}'),
-              _MiniMetric(
-                title: 'Best Streak',
-                value: '${dashboard.bestStreak} d',
-              ),
-              _MiniMetric(
-                title: 'Consistency',
-                value:
-                    '${dashboard.breakdown.consistencyScore.toStringAsFixed(0)}%',
-              ),
-              _MiniMetric(
-                title: 'Mastery',
-                value:
-                    '${dashboard.breakdown.masteryScore.toStringAsFixed(0)}%',
-              ),
-            ],
           ),
         ],
       ),

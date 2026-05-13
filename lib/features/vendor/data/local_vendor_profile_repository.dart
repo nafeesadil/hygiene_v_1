@@ -84,4 +84,8 @@ class LocalVendorProfileRepository {
       ),
     );
   }
+
+  Future<void> clearLocalProfile() async {
+    await _db.delete(_db.localVendorProfiles).go();
+  }
 }

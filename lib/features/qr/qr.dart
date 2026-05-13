@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hygiene_v_1/features/qr/domain/vendor_qr_data.dart';
 import 'package:hygiene_v_1/features/vendor/data/local_vendor_profile_repository.dart';
 import 'package:hygiene_v_1/main.dart' show appDb;
@@ -15,7 +16,7 @@ class _QrPageState extends State<QrPage> {
   late final LocalVendorProfileRepository _localVendorRepo =
       LocalVendorProfileRepository(appDb);
 
-  late Future<VendorQrData> _qrFuture;
+  late Future<VendorQrData?> _qrFuture;
 
   @override
   void initState() {
@@ -23,19 +24,21 @@ class _QrPageState extends State<QrPage> {
     _qrFuture = _loadQrData();
   }
 
-  Future<VendorQrData> _loadQrData() async {
+  Future<VendorQrData?> _loadQrData() async {
     final localProfile = await _localVendorRepo.getLocalProfile();
 
     if (localProfile == null) {
-      return VendorQrData.mock();
+      return null;
     }
 
-    return VendorQrData(
+    final vendorName = localProfile.shopName.trim().isNotEmpty
+        ? localProfile.shopName.trim()
+        : localProfile.vendorName.trim();
+
+    return VendorQrData.fromVendorProfile(
       vendorId: localProfile.vendorId,
-      vendorName: localProfile.shopName.isNotEmpty
-          ? localProfile.shopName
-          : localProfile.vendorName,
-      reviewUrl: localProfile.reviewUrl,
+      vendorName: vendorName.isEmpty ? 'Registered Vendor' : vendorName,
+      savedReviewUrl: localProfile.reviewUrl,
     );
   }
 
@@ -47,19 +50,27 @@ class _QrPageState extends State<QrPage> {
     await _qrFuture;
   }
 
+  Future<void> _copyUrl(String reviewUrl) async {
+    await Clipboard.setData(ClipboardData(text: reviewUrl));
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Review link copied')));
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
       body: SafeArea(
-        child: FutureBuilder<VendorQrData>(
+        child: FutureBuilder<VendorQrData?>(
           future: _qrFuture,
           builder: (context, snapshot) {
-            final qrData = snapshot.data;
-
             if (snapshot.connectionState == ConnectionState.waiting &&
-                qrData == null) {
+                snapshot.data == null) {
               return const Center(child: CircularProgressIndicator());
             }
 
@@ -70,7 +81,11 @@ class _QrPageState extends State<QrPage> {
               );
             }
 
-            final data = qrData ?? VendorQrData.mock();
+            final qrData = snapshot.data;
+
+            if (qrData == null) {
+              return _NoVendorQrView(onRefresh: _refreshQr);
+            }
 
             return RefreshIndicator(
               onRefresh: _refreshQr,
@@ -99,30 +114,36 @@ class _QrPageState extends State<QrPage> {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  _QrHeroCard(qrData: data),
+                  _QrHeroCard(qrData: qrData),
                   const SizedBox(height: 24),
-                  Row(
-                    children: const [
+                  _QrLinkCard(
+                    reviewUrl: qrData.reviewUrl,
+                    vendorId: qrData.vendorId,
+                    onCopy: () => _copyUrl(qrData.reviewUrl),
+                  ),
+                  const SizedBox(height: 24),
+                  const Row(
+                    children: [
                       Expanded(
                         child: _StatCard(
-                          title: 'Current Points',
-                          value: '2,450',
-                          icon: Icons.bolt_rounded,
+                          title: 'Review Flow',
+                          value: 'Active',
+                          icon: Icons.qr_code_scanner_rounded,
                         ),
                       ),
                       SizedBox(width: 14),
                       Expanded(
                         child: _StatCard(
-                          title: 'Trust Score',
-                          value: '98%',
-                          icon: Icons.verified_rounded,
+                          title: 'Customer Form',
+                          value: 'Web',
+                          icon: Icons.rate_review_rounded,
                           warm: true,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 24),
-                  _HowItWorksCard(reviewUrl: data.reviewUrl),
+                  _HowItWorksCard(reviewUrl: qrData.reviewUrl),
                 ],
               ),
             );
@@ -236,6 +257,69 @@ class _QrHeroCard extends StatelessWidget {
   }
 }
 
+class _QrLinkCard extends StatelessWidget {
+  final String reviewUrl;
+  final String vendorId;
+  final VoidCallback onCopy;
+
+  const _QrLinkCard({
+    required this.reviewUrl,
+    required this.vendorId,
+    required this.onCopy,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.18)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Vendor Review Link',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Vendor ID: $vendorId',
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w700,
+              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.70),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            reviewUrl,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: onCopy,
+              icon: const Icon(Icons.copy_rounded),
+              label: const Text('Copy Review Link'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;
@@ -326,12 +410,16 @@ class _HowItWorksCard extends StatelessWidget {
             text: 'Customer scans the QR code.',
           ),
           const _InfoLine(
+            icon: Icons.public_rounded,
+            text: 'A public review form opens in the browser.',
+          ),
+          const _InfoLine(
             icon: Icons.rate_review_rounded,
             text: 'Customer leaves a rating and short feedback.',
           ),
           const _InfoLine(
             icon: Icons.insights_rounded,
-            text: 'Reviews will later update the public customer rating.',
+            text: 'The review updates this vendor’s rating summary.',
           ),
           const SizedBox(height: 12),
           Text(
@@ -371,6 +459,55 @@ class _InfoLine extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NoVendorQrView extends StatelessWidget {
+  final Future<void> Function() onRefresh;
+
+  const _NoVendorQrView({required this.onRefresh});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          const SizedBox(height: 120),
+          Icon(
+            Icons.qr_code_2_rounded,
+            size: 80,
+            color: theme.colorScheme.primary,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'No vendor QR code yet',
+            textAlign: TextAlign.center,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Register or sign in as a vendor first. After registration, Hygia will generate a unique review QR code for this vendor.',
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.70),
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 20),
+          OutlinedButton.icon(
+            onPressed: onRefresh,
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('Refresh'),
           ),
         ],
       ),

@@ -7,6 +7,7 @@ import 'package:hygiene_v_1/core/local_db/drift_db.dart'
 import 'package:hygiene_v_1/features/home/widgets/customer_reviews_card.dart';
 import 'package:hygiene_v_1/features/home/widgets/shop_score.dart';
 import 'package:hygiene_v_1/features/home/widgets/streak_status_card.dart';
+import 'package:hygiene_v_1/features/sync/application/cloud_sync_service.dart';
 import 'package:hygiene_v_1/features/tasks/data/task_repository.dart';
 import 'package:hygiene_v_1/features/vendor/data/local_vendor_profile_repository.dart';
 import 'package:hygiene_v_1/features/vendor/data/vendor_repository.dart';
@@ -25,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   final VendorRepository _vendorRepo = VendorRepository(appDb);
   final LocalVendorProfileRepository _localVendorProfileRepo =
       LocalVendorProfileRepository(appDb);
+  late final CloudSyncService _cloudSyncService = CloudSyncService(appDb);
 
   bool _isOpen = false;
   DateTime? _openedAt;
@@ -49,6 +51,12 @@ class _HomePageState extends State<HomePage> {
     await _loadShopState();
     await _loadDashboard();
     await _loadActiveTasks();
+
+    // Pull latest customer rating/review summary from Firebase
+    // and save it into the local vendor profile cache.
+    await _cloudSyncService.pullRatingSummaryForLocalVendor();
+
+    // Reload local profile after sync so the CustomerReviewsCard updates.
     await _loadLocalVendorProfile();
   }
 

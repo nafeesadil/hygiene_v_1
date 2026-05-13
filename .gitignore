@@ -48,11 +48,12 @@ app.*.map.json
 linux/
 macos/
 windows/
-
 # build_runner / drift generated
-**/*.g.dart
-
-# FVM Version Cache
-.fvm/
-# FVM (do not commit SDK)
-.fvm/
+# Commit generated Drift files so desktop/laptop sync stays stable.
+# **/*.g.dart
+# FVM
+# Keep project Flutter version config, but do not commit downloaded SDK/cache files.
+.fvm/flutter_sdk
+.fvm/versions/
+.fvm/release
+.fvm/version

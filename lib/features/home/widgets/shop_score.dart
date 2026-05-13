@@ -54,42 +54,45 @@ class HygieneScoreSummary extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Icon(
                       Icons.verified_rounded,
                       color: theme.colorScheme.primary,
-                      size: 34,
+                      size: 32,
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      safeVendorScore.toStringAsFixed(1),
+                      safeVendorScore.toStringAsFixed(0),
                       style: theme.textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: Text(
+                        ' / 100',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: theme.textTheme.bodyMedium?.color?.withValues(
+                            alpha: 0.65,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
                 _ScoreBadge(percent: safeVendorScore),
-                const SizedBox(height: 14),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _InfoChip(
-                      icon: Icons.workspace_premium_rounded,
-                      label: 'Level $vendorLevel',
+                const SizedBox(height: 12),
+                Text(
+                  'Your vendor score is calculated from consistency, daily performance, and task mastery.',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.textTheme.bodySmall?.color?.withValues(
+                      alpha: 0.70,
                     ),
-                    _InfoChip(icon: Icons.bolt_rounded, label: '$totalXp XP'),
-                    _InfoChip(
-                      icon: Icons.local_fire_department_rounded,
-                      label: '$currentStreak d streak',
-                    ),
-                    _InfoChip(
-                      icon: Icons.emoji_events_rounded,
-                      label: 'Best $bestStreak d',
-                    ),
-                  ],
+                    height: 1.3,
+                  ),
                 ),
               ],
             ),
@@ -100,44 +103,9 @@ class HygieneScoreSummary extends StatelessWidget {
   }
 }
 
-class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _InfoChip({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: theme.colorScheme.primary.withValues(alpha: 0.14),
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: theme.colorScheme.primary),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: theme.textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _ScoreBadge extends StatelessWidget {
   final double percent;
+
   const _ScoreBadge({required this.percent});
 
   @override

@@ -1,0 +1,40 @@
+{
+  "appName": "হাইজিয়া",
+  "home": "হোম",
+  "tasks": "কাজ",
+  "qr": "কিউআর",
+  "profile": "প্রোফাইল",
+
+  "vendorProfile": "বিক্রেতার প্রোফাইল",
+  "leadVendor": "প্রধান বিক্রেতা",
+  "hygieneScore": "বিক্রেতার স্কোর",
+  "level": "লেভেল",
+  "streak": "স্ট্রিক",
+  "days": "দিন",
+  "totalXpEarned": "মোট XP অর্জন",
+  "viewLedger": "হিসাব দেখুন",
+  "storeCheckIn": "দোকান চেক-ইন",
+  "customerPreviewQuote": "পরিষ্কার অভ্যাস গ্রাহকের বিশ্বাস তৈরি করে।",
+  "customerReviews": "গ্রাহক রিভিউ",
+  "downloadPoster": "পোস্টার ডাউনলোড করুন",
+
+  "shopManagement": "দোকান ব্যবস্থাপনা",
+  "languageSettings": "ভাষা সেটিংস",
+  "notifications": "নোটিফিকেশন",
+  "hygieneTips": "স্বাস্থ্যবিধি টিপস",
+  "newLabel": "নতুন",
+
+  "english": "ইংরেজি",
+  "german": "জার্মান",
+  "bengali": "বাংলা",
+  "selectLanguage": "ভাষা নির্বাচন করুন",
+  "cancel": "বাতিল",
+
+  "aboutHygia": "হাইজিয়া সম্পর্কে",
+  "privacyPolicy": "গোপনীয়তা ও ডাটা নীতি",
+  "appVersion": "হাইজিয়া বিক্রেতা অ্যাপ v1.0.0",
+
+  "vendorName": "করিমের ঝালমুড়ি",
+  "vendorCategory": "ঝালমুড়ি ও স্ন্যাকস",
+  "vendorLead": "করিম"
+}

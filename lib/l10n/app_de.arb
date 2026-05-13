@@ -1,0 +1,40 @@
+{
+  "appName": "Hygia",
+  "home": "Start",
+  "tasks": "Aufgaben",
+  "qr": "QR",
+  "profile": "Profil",
+
+  "vendorProfile": "Anbieterprofil",
+  "leadVendor": "Hauptanbieter",
+  "hygieneScore": "Anbieterwert",
+  "level": "Level",
+  "streak": "Serie",
+  "days": "Tage",
+  "totalXpEarned": "Gesamte XP",
+  "viewLedger": "Verlauf anzeigen",
+  "storeCheckIn": "Shop-Check-in",
+  "customerPreviewQuote": "Saubere Gewohnheiten schaffen Vertrauen.",
+  "customerReviews": "Kundenbewertungen",
+  "downloadPoster": "Poster herunterladen",
+
+  "shopManagement": "Shop-Verwaltung",
+  "languageSettings": "Spracheinstellungen",
+  "notifications": "Benachrichtigungen",
+  "hygieneTips": "Hygienetipps",
+  "newLabel": "NEU",
+
+  "english": "Englisch",
+  "german": "Deutsch",
+  "bengali": "Bengalisch",
+  "selectLanguage": "Sprache auswählen",
+  "cancel": "Abbrechen",
+
+  "aboutHygia": "Über Hygia",
+  "privacyPolicy": "Datenschutzrichtlinie",
+  "appVersion": "Hygia Anbieter-App v1.0.0",
+
+  "vendorName": "Karims Jhalmuri",
+  "vendorCategory": "Jhalmuri & Snacks",
+  "vendorLead": "Karim"
+}

@@ -7,7 +7,8 @@ import '../../features/tasks/data/drift/tasks_tables.dart';
 import '../../features/tasks/data/drift/shop_state_table.dart';
 import 'package:hygiene_v_1/features/vendor/data/drift/vendor_daily_stats_table.dart';
 import 'package:hygiene_v_1/features/vendor/data/drift/vendor_state_table.dart';
-
+import 'package:hygiene_v_1/features/vendor/data/drift/local_vendor_profile.dart';
+import 'package:hygiene_v_1/features/sync/data/drift/sync_queue_table.dart';
 part 'drift_db.g.dart';
 
 @DriftDatabase(
@@ -15,18 +16,17 @@ part 'drift_db.g.dart';
     Tasks,
     TaskLogs,
     ShopState,
-    Tasks,
-    TaskLogs,
-    ShopState,
     VendorState,
     VendorDailyStats,
+    LocalVendorProfiles,
+    SyncQueue,
   ],
 )
 class AppDb extends _$AppDb {
   AppDb() : super(_openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 }
 
 LazyDatabase _openConnection() {

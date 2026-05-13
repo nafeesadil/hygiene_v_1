@@ -4,7 +4,6 @@ import 'package:hygiene_v_1/generated/l10n/app_localizations.dart';
 
 import 'firebase_options.dart';
 
-import 'package:hygiene_v_1/app/vendor_shell.dart';
 import 'package:hygiene_v_1/core/local_db/drift_db.dart';
 import 'package:hygiene_v_1/core/settings/app_settings_controller.dart';
 import 'package:hygiene_v_1/features/shared/application/notification_service.dart';

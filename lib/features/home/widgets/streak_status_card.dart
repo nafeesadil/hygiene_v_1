@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hygiene_v_1/generated/l10n/app_localizations.dart';
 
 class StreakStatusCard extends StatelessWidget {
   final int currentStreak;
@@ -17,6 +18,7 @@ class StreakStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final halfTarget = (todayTarget * 0.5).ceil();
     final remaining = (halfTarget - todayXp).clamp(0, halfTarget);
@@ -51,7 +53,7 @@ class StreakStatusCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$currentStreak-day working streak',
+                  l10n.workingStreak(currentStreak),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w900,
                   ),
@@ -59,8 +61,8 @@ class StreakStatusCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   safeToday
-                      ? 'Streak protected today. Best: $bestStreak days.'
-                      : 'Earn $remaining more XP today to protect your streak.',
+                      ? l10n.streakProtectedToday(bestStreak)
+                      : l10n.earnMoreXpToProtectStreak(remaining),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),

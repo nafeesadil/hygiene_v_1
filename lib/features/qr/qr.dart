@@ -4,6 +4,9 @@ import 'package:hygiene_v_1/features/qr/domain/vendor_qr_data.dart';
 import 'package:hygiene_v_1/features/vendor/data/local_vendor_profile_repository.dart';
 import 'package:hygiene_v_1/main.dart' show appDb;
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hygiene_v_1/features/vendor/domain/vendor_profile_model.dart';
 
 class QrPage extends StatefulWidget {
   const QrPage({super.key});
@@ -27,18 +30,77 @@ class _QrPageState extends State<QrPage> {
   Future<VendorQrData?> _loadQrData() async {
     final localProfile = await _localVendorRepo.getLocalProfile();
 
-    if (localProfile == null) {
+    if (localProfile != null) {
+      final vendorName = localProfile.shopName.trim().isNotEmpty
+          ? localProfile.shopName.trim()
+          : localProfile.vendorName.trim();
+
+      return VendorQrData.fromVendorProfile(
+        vendorId: localProfile.vendorId,
+        vendorName: vendorName.isEmpty ? 'Registered Vendor' : vendorName,
+        savedReviewUrl: localProfile.reviewUrl,
+      );
+    }
+
+    // Local profile is missing after sign out/sign in.
+    // Restore it from Firebase using the current signed-in user.
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
       return null;
     }
 
-    final vendorName = localProfile.shopName.trim().isNotEmpty
-        ? localProfile.shopName.trim()
-        : localProfile.vendorName.trim();
+    final vendorDoc = await FirebaseFirestore.instance
+        .collection('vendors')
+        .doc(user.uid)
+        .get();
+
+    if (!vendorDoc.exists || vendorDoc.data() == null) {
+      return null;
+    }
+
+    final data = vendorDoc.data()!;
+    final reviewUrl = VendorQrData.buildReviewUrl(user.uid);
+
+    final restoredProfile = VendorProfileModel(
+      vendorId: user.uid,
+      ownerUid: data['ownerUid'] as String? ?? user.uid,
+      vendorName: data['vendorName'] as String? ?? '',
+      shopName: data['shopName'] as String? ?? '',
+      foodCategory: data['foodCategory'] as String? ?? '',
+      description: data['description'] as String? ?? '',
+      phoneNumber: data['phoneNumber'] as String? ?? '',
+      locationText: data['locationText'] as String? ?? '',
+      city: data['city'] as String? ?? '',
+      country: data['country'] as String? ?? 'Bangladesh',
+      preferredLanguage: data['preferredLanguage'] as String? ?? 'en',
+      profileImageUrl: data['profileImageUrl'] as String?,
+      reviewUrl: reviewUrl,
+    );
+
+    await _localVendorRepo.saveProfile(restoredProfile);
+
+    await FirebaseFirestore.instance.collection('vendors').doc(user.uid).set({
+      'reviewUrl': reviewUrl,
+      'updatedAt': DateTime.now().millisecondsSinceEpoch,
+    }, SetOptions(merge: true));
+
+    await FirebaseFirestore.instance.collection('vendor_qr').doc(user.uid).set({
+      'vendorId': user.uid,
+      'reviewUrl': reviewUrl,
+      'qrPayload': reviewUrl,
+      'isEnabled': true,
+      'updatedAt': DateTime.now().millisecondsSinceEpoch,
+    }, SetOptions(merge: true));
+
+    final vendorName = restoredProfile.shopName.trim().isNotEmpty
+        ? restoredProfile.shopName.trim()
+        : restoredProfile.vendorName.trim();
 
     return VendorQrData.fromVendorProfile(
-      vendorId: localProfile.vendorId,
+      vendorId: restoredProfile.vendorId,
       vendorName: vendorName.isEmpty ? 'Registered Vendor' : vendorName,
-      savedReviewUrl: localProfile.reviewUrl,
+      savedReviewUrl: restoredProfile.reviewUrl,
     );
   }
 

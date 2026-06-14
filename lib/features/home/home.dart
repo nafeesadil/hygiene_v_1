@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:drift/drift.dart' show InsertMode, Value;
 import 'package:flutter/material.dart';
+import 'package:hygiene_v_1/generated/l10n/app_localizations.dart';
 import 'package:hygiene_v_1/core/local_db/drift_db.dart'
     show ShopStateCompanion, LocalVendorProfile;
 import 'package:hygiene_v_1/features/home/widgets/customer_reviews_card.dart';
@@ -131,8 +132,10 @@ class _HomePageState extends State<HomePage> {
 
     if (!mounted) return;
 
+    final l10n = AppLocalizations.of(context)!;
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(next ? 'Shop is open' : 'Shop is closed')),
+      SnackBar(content: Text(next ? l10n.shopOpen : l10n.shopClosed)),
     );
   }
 
@@ -148,6 +151,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final dashboard = _dashboard;
     final openFor = (_isOpen && _openedAt != null)
@@ -159,7 +163,7 @@ class _HomePageState extends State<HomePage> {
         onPressed: _toggleShop,
         backgroundColor: _isOpen ? Colors.green : Colors.red,
         icon: Icon(_isOpen ? Icons.store : Icons.store_outlined),
-        label: Text(_isOpen ? 'Close Shop' : 'Open Shop'),
+        label: Text(_isOpen ? l10n.closeShop : l10n.openShop),
       ),
       body: SafeArea(
         child: RefreshIndicator(
@@ -170,7 +174,7 @@ class _HomePageState extends State<HomePage> {
               Row(
                 children: [
                   Text(
-                    'My Home',
+                    l10n.homeTitle,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w900,
                     ),
@@ -217,13 +221,13 @@ class _HomePageState extends State<HomePage> {
                 CustomerReviewsCard(
                   rating: _localVendorProfile?.averageRating ?? 0.0,
                   reviewCount: _localVendorProfile?.reviewCount ?? 0,
-                  reviewerName: 'Latest customer',
+                  reviewerName: l10n.latestCustomer,
                   comment:
                       _localVendorProfile?.lastReviewComment ??
-                      'Customer reviews will appear here after customers scan your QR code and leave feedback.',
+                      l10n.noCustomerReviewMessage,
                   timeLabel: (_localVendorProfile?.reviewCount ?? 0) > 0
-                      ? 'Latest review'
-                      : 'No reviews yet',
+                      ? l10n.latestReview
+                      : l10n.noReviewsYet,
                 ),
               ],
             ],
@@ -272,6 +276,7 @@ class _DashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       width: double.infinity,
@@ -292,7 +297,7 @@ class _DashboardCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            isOpen ? 'Welcome back 👋' : 'Welcome 👋',
+            isOpen ? l10n.welcomeBack : l10n.welcome,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w800,
             ),
@@ -300,8 +305,8 @@ class _DashboardCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             isOpen
-                ? 'Your hygiene progress is being tracked while the shop is open.'
-                : 'Open your shop to begin tracking today’s hygiene progress.',
+                ? l10n.welcomeOpenSubtitle
+                : l10n.welcomeClosedSubtitle,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.75),
             ),
@@ -323,23 +328,23 @@ class _DashboardCard extends StatelessWidget {
             children: [
               _MetricTile(
                 icon: Icons.task_alt_rounded,
-                title: 'Active Tasks',
+                title: l10n.activeTasks,
                 value: '$activeTaskCount',
               ),
               _MetricTile(
                 icon: Icons.flag_rounded,
-                title: 'Today Target',
+                title: l10n.todayTarget,
                 value: '${dashboard.todayTarget} XP',
               ),
               _MetricTile(
                 icon: Icons.insights_rounded,
-                title: 'Consistency',
+                title: l10n.consistency,
                 value:
                     '${dashboard.breakdown.consistencyScore.toStringAsFixed(0)}%',
               ),
               _MetricTile(
                 icon: Icons.auto_graph_rounded,
-                title: 'Performance',
+                title: l10n.performance,
                 value:
                     '${dashboard.breakdown.performanceScore.toStringAsFixed(0)}%',
               ),
@@ -347,7 +352,7 @@ class _DashboardCard extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           Text(
-            'Open for',
+            l10n.openFor,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.70),
             ),
@@ -380,7 +385,6 @@ class _MetricTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       width: 155,
       padding: const EdgeInsets.all(12),

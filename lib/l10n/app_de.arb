@@ -4,7 +4,6 @@
   "tasks": "Aufgaben",
   "qr": "QR",
   "profile": "Profil",
-
   "vendorProfile": "Anbieterprofil",
   "leadVendor": "Hauptanbieter",
   "hygieneScore": "Anbieterwert",
@@ -17,24 +16,122 @@
   "customerPreviewQuote": "Saubere Gewohnheiten schaffen Vertrauen.",
   "customerReviews": "Kundenbewertungen",
   "downloadPoster": "Poster herunterladen",
-
   "shopManagement": "Shop-Verwaltung",
   "languageSettings": "Spracheinstellungen",
   "notifications": "Benachrichtigungen",
   "hygieneTips": "Hygienetipps",
   "newLabel": "NEU",
-
   "english": "Englisch",
   "german": "Deutsch",
   "bengali": "Bengalisch",
   "selectLanguage": "Sprache auswählen",
   "cancel": "Abbrechen",
-
   "aboutHygia": "Über Hygia",
   "privacyPolicy": "Datenschutzrichtlinie",
   "appVersion": "Hygia Anbieter-App v1.0.0",
-
   "vendorName": "Karims Jhalmuri",
   "vendorCategory": "Jhalmuri & Snacks",
-  "vendorLead": "Karim"
+  "vendorLead": "Karim",
+  "homeTitle": "Mein Start",
+  "shopOpen": "Shop ist geöffnet",
+  "shopClosed": "Shop ist geschlossen",
+  "closeShop": "Shop schließen",
+  "openShop": "Shop öffnen",
+  "welcomeBack": "Willkommen zurück 👋",
+  "welcome": "Willkommen 👋",
+  "welcomeOpenSubtitle": "Dein Hygienefortschritt wird verfolgt, solange der Shop geöffnet ist.",
+  "welcomeClosedSubtitle": "Öffne deinen Shop, um den heutigen Hygienefortschritt zu starten.",
+  "activeTasks": "Aktive Aufgaben",
+  "todayTarget": "Tagesziel",
+  "consistency": "Konstanz",
+  "performance": "Leistung",
+  "openFor": "Geöffnet seit",
+  "latestCustomer": "Letzter Kunde",
+  "latestReview": "Letzte Bewertung",
+  "noReviewsYet": "Noch keine Bewertungen",
+  "noCustomerReviewMessage": "Kundenbewertungen erscheinen hier, nachdem Kunden deinen QR-Code gescannt und Feedback gegeben haben.",
+  "today": "Heute",
+  "vendorScore": "Anbieterwert",
+  "vendorLevelLabel": "Anbieter-Level {level}",
+  "xpNeededToReachLevel": "Noch {xp} XP bis Level {level}.",
+  "strongHygiene": "Starke Hygiene",
+  "improving": "Verbessert sich",
+  "needsAttention": "Mehr Hygiene nötig",
+  "workingStreak": "{days}-Tage-Arbeitsserie",
+  "streakProtectedToday": "Serie heute geschützt. Beste Serie: {bestStreak} Tage.",
+  "earnMoreXpToProtectStreak": "Sammle heute noch {xp} XP, um deine Serie zu schützen.",
+  "reviewsCount": "{count} Bewertungen",
+  "merchantTrustPass": "HÄNDLER-VERTRAUENSPASS",
+"scanToRateMe": "Scannen und bewerten",
+"scanToRateDescription": "Kunden können diesen Code scannen, um eine Hygienebewertung und Feedback abzugeben.",
+"vendorReviewLink": "Bewertungslink des Anbieters",
+"vendorIdLabel": "Anbieter-ID: {vendorId}",
+"copyReviewLink": "Bewertungslink kopieren",
+"reviewLinkCopied": "Bewertungslink kopiert",
+"reviewFlow": "Bewertungsablauf",
+"active": "Aktiv",
+"customerForm": "Kundenformular",
+"web": "Web",
+"howThisWorks": "So funktioniert es",
+"customerScansQr": "Der Kunde scannt den QR-Code.",
+"publicReviewFormOpens": "Ein öffentliches Bewertungsformular öffnet sich im Browser.",
+"customerLeavesRating": "Der Kunde gibt eine Bewertung und kurzes Feedback ab.",
+"reviewUpdatesSummary": "Die Bewertung aktualisiert die Zusammenfassung dieses Anbieters.",
+"noVendorQrCodeYet": "Noch kein Anbieter-QR-Code",
+"noVendorQrCodeDescription": "Registrieren Sie sich oder melden Sie sich zuerst als Anbieter an. Nach der Registrierung erstellt Hygia einen eindeutigen Bewertungs-QR-Code für diesen Anbieter.",
+"refresh": "Aktualisieren",
+"couldNotLoadVendorQrData": "Anbieter-QR-Daten konnten nicht geladen werden.",
+"tryAgain": "Erneut versuchen"
+  "@vendorLevelLabel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@xpNeededToReachLevel": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      },
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@vendorIdLabel": {
+  "placeholders": {
+    "vendorId": {
+      "type": "String"
+    }
+  }
+},
+  "@workingStreak": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@streakProtectedToday": {
+    "placeholders": {
+      "bestStreak": {
+        "type": "int"
+      }
+    }
+  },
+  "@earnMoreXpToProtectStreak": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

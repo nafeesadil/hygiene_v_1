@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hygiene_v_1/generated/l10n/app_localizations.dart';
 import 'package:hygiene_v_1/features/home/widgets/active_task_progress.dart';
 
 class HygieneScoreSummary extends StatelessWidget {
@@ -26,6 +27,7 @@ class HygieneScoreSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     final todayPercent = todayTarget <= 0 ? 0 : (todayXp / todayTarget) * 100;
     final safeTodayPercent = todayPercent.clamp(0, 100).toDouble();
@@ -48,7 +50,7 @@ class HygieneScoreSummary extends StatelessWidget {
               OverallProgressGauge(
                 percent: safeTodayPercent,
                 centerLabel: '$todayXp\n/ $todayTarget XP',
-                bottomLabel: 'Today',
+                bottomLabel: l10n.today,
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -56,7 +58,7 @@ class HygieneScoreSummary extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Vendor Score',
+                      l10n.vendorScore,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w900,
                       ),
@@ -129,6 +131,7 @@ class _VendorLevelProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final nextLevel = vendorLevel + 1;
 
     return Container(
@@ -160,7 +163,7 @@ class _VendorLevelProgress extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Vendor Level $vendorLevel',
+                  l10n.vendorLevelLabel(vendorLevel),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w900,
                   ),
@@ -185,7 +188,7 @@ class _VendorLevelProgress extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '$xpToNextLevel XP needed to reach Level $nextLevel.',
+            l10n.xpNeededToReachLevel(xpToNextLevel, nextLevel),
             style: theme.textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.w700,
               color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.70),
@@ -205,6 +208,7 @@ class _ScoreBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final p = percent.clamp(0, 100).toDouble();
 
     IconData icon;
@@ -214,17 +218,17 @@ class _ScoreBadge extends StatelessWidget {
 
     if (p >= 75) {
       icon = Icons.sentiment_very_satisfied_rounded;
-      label = 'Strong hygiene';
+      label = l10n.strongHygiene;
       bg = Colors.green.shade500.withValues(alpha: 0.12);
       fg = Colors.green.shade700;
     } else if (p >= 50) {
       icon = Icons.sentiment_satisfied_rounded;
-      label = 'Improving';
+      label = l10n.improving;
       bg = Colors.amber.shade500.withValues(alpha: 0.14);
       fg = Colors.amber.shade800;
     } else {
       icon = Icons.sentiment_dissatisfied_rounded;
-      label = 'Needs attention';
+      label = l10n.needsAttention;
       bg = Colors.red.shade500.withValues(alpha: 0.12);
       fg = Colors.red.shade700;
     }

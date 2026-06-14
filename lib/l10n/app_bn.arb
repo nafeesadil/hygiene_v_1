@@ -4,7 +4,6 @@
   "tasks": "কাজ",
   "qr": "কিউআর",
   "profile": "প্রোফাইল",
-
   "vendorProfile": "বিক্রেতার প্রোফাইল",
   "leadVendor": "প্রধান বিক্রেতা",
   "hygieneScore": "বিক্রেতার স্কোর",
@@ -17,24 +16,122 @@
   "customerPreviewQuote": "পরিষ্কার অভ্যাস গ্রাহকের বিশ্বাস তৈরি করে।",
   "customerReviews": "গ্রাহক রিভিউ",
   "downloadPoster": "পোস্টার ডাউনলোড করুন",
-
   "shopManagement": "দোকান ব্যবস্থাপনা",
   "languageSettings": "ভাষা সেটিংস",
   "notifications": "নোটিফিকেশন",
   "hygieneTips": "স্বাস্থ্যবিধি টিপস",
   "newLabel": "নতুন",
-
   "english": "ইংরেজি",
   "german": "জার্মান",
   "bengali": "বাংলা",
   "selectLanguage": "ভাষা নির্বাচন করুন",
   "cancel": "বাতিল",
-
   "aboutHygia": "হাইজিয়া সম্পর্কে",
   "privacyPolicy": "গোপনীয়তা ও ডাটা নীতি",
   "appVersion": "হাইজিয়া বিক্রেতা অ্যাপ v1.0.0",
-
   "vendorName": "করিমের ঝালমুড়ি",
   "vendorCategory": "ঝালমুড়ি ও স্ন্যাকস",
-  "vendorLead": "করিম"
+  "vendorLead": "করিম",
+  "homeTitle": "আমার হোম",
+  "shopOpen": "দোকান খোলা হয়েছে",
+  "shopClosed": "দোকান বন্ধ হয়েছে",
+  "closeShop": "দোকান বন্ধ করুন",
+  "openShop": "দোকান খুলুন",
+  "welcomeBack": "আবার স্বাগতম 👋",
+  "welcome": "স্বাগতম 👋",
+  "welcomeOpenSubtitle": "দোকান খোলা থাকলে আপনার স্বাস্থ্যবিধির অগ্রগতি ট্র্যাক করা হবে।",
+  "welcomeClosedSubtitle": "আজকের স্বাস্থ্যবিধির অগ্রগতি শুরু করতে দোকান খুলুন।",
+  "activeTasks": "সক্রিয় কাজ",
+  "todayTarget": "আজকের লক্ষ্য",
+  "consistency": "নিয়মিততা",
+  "performance": "পারফরম্যান্স",
+  "openFor": "খোলা আছে",
+  "latestCustomer": "সর্বশেষ গ্রাহক",
+  "latestReview": "সর্বশেষ রিভিউ",
+  "noReviewsYet": "এখনও কোনো রিভিউ নেই",
+  "noCustomerReviewMessage": "গ্রাহকরা আপনার QR কোড স্ক্যান করে মতামত দিলে রিভিউ এখানে দেখা যাবে।",
+  "today": "আজ",
+  "vendorScore": "বিক্রেতার স্কোর",
+  "vendorLevelLabel": "বিক্রেতার লেভেল {level}",
+  "xpNeededToReachLevel": "লেভেল {level}-এ পৌঁছাতে আরও {xp} XP প্রয়োজন।",
+  "strongHygiene": "ভালো স্বাস্থ্যবিধি",
+  "improving": "উন্নতি হচ্ছে",
+  "needsAttention": "মনোযোগ প্রয়োজন",
+  "workingStreak": "{days} দিনের কাজের স্ট্রিক",
+  "streakProtectedToday": "আজ স্ট্রিক সুরক্ষিত। সেরা: {bestStreak} দিন।",
+  "earnMoreXpToProtectStreak": "স্ট্রিক সুরক্ষিত রাখতে আজ আরও {xp} XP অর্জন করুন।",
+  "reviewsCount": "{count}টি রিভিউ",
+  "merchantTrustPass": "বিক্রেতার ট্রাস্ট পাস",
+"scanToRateMe": "স্ক্যান করে রেট দিন",
+"scanToRateDescription": "গ্রাহকরা এই কোড স্ক্যান করে স্বাস্থ্যবিধি রেটিং ও মতামত দিতে পারবেন।",
+"vendorReviewLink": "বিক্রেতার রিভিউ লিংক",
+"vendorIdLabel": "বিক্রেতা আইডি: {vendorId}",
+"copyReviewLink": "রিভিউ লিংক কপি করুন",
+"reviewLinkCopied": "রিভিউ লিংক কপি হয়েছে",
+"reviewFlow": "রিভিউ প্রক্রিয়া",
+"active": "সক্রিয়",
+"customerForm": "গ্রাহক ফর্ম",
+"web": "ওয়েব",
+"howThisWorks": "এটি কীভাবে কাজ করে",
+"customerScansQr": "গ্রাহক QR কোড স্ক্যান করেন।",
+"publicReviewFormOpens": "ব্রাউজারে একটি পাবলিক রিভিউ ফর্ম খুলবে।",
+"customerLeavesRating": "গ্রাহক রেটিং ও ছোট মতামত দেন।",
+"reviewUpdatesSummary": "রিভিউটি এই বিক্রেতার রেটিং সারাংশ আপডেট করে।",
+"noVendorQrCodeYet": "এখনো কোনো বিক্রেতা QR কোড নেই",
+"noVendorQrCodeDescription": "প্রথমে বিক্রেতা হিসেবে নিবন্ধন করুন বা সাইন ইন করুন। নিবন্ধনের পর Hygia এই বিক্রেতার জন্য একটি ইউনিক রিভিউ QR কোড তৈরি করবে।",
+"refresh": "রিফ্রেশ",
+"couldNotLoadVendorQrData": "বিক্রেতার QR ডেটা লোড করা যায়নি।",
+"tryAgain": "আবার চেষ্টা করুন"
+  "@vendorLevelLabel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@vendorIdLabel": {
+  "placeholders": {
+    "vendorId": {
+      "type": "String"
+    }
+  }
+},
+  "@xpNeededToReachLevel": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      },
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@workingStreak": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@streakProtectedToday": {
+    "placeholders": {
+      "bestStreak": {
+        "type": "int"
+      }
+    }
+  },
+  "@earnMoreXpToProtectStreak": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

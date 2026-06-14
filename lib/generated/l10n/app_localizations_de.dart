@@ -106,4 +106,106 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get vendorLead => 'Karim';
+
+  @override
+  String get homeTitle => 'Mein Start';
+
+  @override
+  String get shopOpen => 'Shop ist geöffnet';
+
+  @override
+  String get shopClosed => 'Shop ist geschlossen';
+
+  @override
+  String get closeShop => 'Shop schließen';
+
+  @override
+  String get openShop => 'Shop öffnen';
+
+  @override
+  String get welcomeBack => 'Willkommen zurück 👋';
+
+  @override
+  String get welcome => 'Willkommen 👋';
+
+  @override
+  String get welcomeOpenSubtitle =>
+      'Dein Hygienefortschritt wird verfolgt, solange der Shop geöffnet ist.';
+
+  @override
+  String get welcomeClosedSubtitle =>
+      'Öffne deinen Shop, um den heutigen Hygienefortschritt zu starten.';
+
+  @override
+  String get activeTasks => 'Aktive Aufgaben';
+
+  @override
+  String get todayTarget => 'Tagesziel';
+
+  @override
+  String get consistency => 'Konstanz';
+
+  @override
+  String get performance => 'Leistung';
+
+  @override
+  String get openFor => 'Geöffnet seit';
+
+  @override
+  String get latestCustomer => 'Letzter Kunde';
+
+  @override
+  String get latestReview => 'Letzte Bewertung';
+
+  @override
+  String get noReviewsYet => 'Noch keine Bewertungen';
+
+  @override
+  String get noCustomerReviewMessage =>
+      'Kundenbewertungen erscheinen hier, nachdem Kunden deinen QR-Code gescannt und Feedback gegeben haben.';
+
+  @override
+  String get today => 'Heute';
+
+  @override
+  String get vendorScore => 'Anbieterwert';
+
+  @override
+  String vendorLevelLabel(int level) {
+    return 'Anbieter-Level $level';
+  }
+
+  @override
+  String xpNeededToReachLevel(int xp, int level) {
+    return 'Noch $xp XP bis Level $level.';
+  }
+
+  @override
+  String get strongHygiene => 'Starke Hygiene';
+
+  @override
+  String get improving => 'Verbessert sich';
+
+  @override
+  String get needsAttention => 'Mehr Hygiene nötig';
+
+  @override
+  String workingStreak(int days) {
+    return '$days-Tage-Arbeitsserie';
+  }
+
+  @override
+  String streakProtectedToday(int bestStreak) {
+    return 'Serie heute geschützt. Beste Serie: $bestStreak Tage.';
+  }
+
+  @override
+  String earnMoreXpToProtectStreak(int xp) {
+    return 'Sammle heute noch $xp XP, um deine Serie zu schützen.';
+  }
+
+  @override
+  String reviewsCount(int count) {
+    return '$count Bewertungen';
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hygiene_v_1/generated/l10n/app_localizations.dart';
 
 class CustomerReviewsCard extends StatelessWidget {
   final double rating;
@@ -22,6 +23,7 @@ class CustomerReviewsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final safeRating = rating.clamp(0, 5).toDouble();
 
     return Material(
@@ -67,14 +69,14 @@ class CustomerReviewsCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Customer Reviews',
+                          l10n.customerReviews,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w900,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '$reviewCount reviews',
+                          l10n.reviewsCount(reviewCount),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.textTheme.bodySmall?.color?.withValues(
                               alpha: 0.65,

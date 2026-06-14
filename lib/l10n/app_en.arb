@@ -4,7 +4,6 @@
   "tasks": "Tasks",
   "qr": "QR",
   "profile": "Profile",
-
   "vendorProfile": "Vendor Profile",
   "leadVendor": "Lead Vendor",
   "hygieneScore": "Vendor Score",
@@ -17,24 +16,122 @@
   "customerPreviewQuote": "Clean habits build customer trust.",
   "customerReviews": "Customer Reviews",
   "downloadPoster": "Download Poster",
-
   "shopManagement": "Shop Management",
   "languageSettings": "Language Settings",
   "notifications": "Notifications",
   "hygieneTips": "Hygiene Tips",
   "newLabel": "NEW",
-
   "english": "English",
   "german": "German",
   "bengali": "Bengali",
   "selectLanguage": "Select Language",
   "cancel": "Cancel",
-
   "aboutHygia": "About Hygia",
   "privacyPolicy": "Privacy & Data Policy",
   "appVersion": "Hygia Vendor App v1.0.0",
-
   "vendorName": "Karim's Jhalmuri",
   "vendorCategory": "Jhalmuri & Snacks",
-  "vendorLead": "Karim"
+  "vendorLead": "Karim",
+  "homeTitle": "My Home",
+  "shopOpen": "Shop is open",
+  "shopClosed": "Shop is closed",
+  "closeShop": "Close Shop",
+  "openShop": "Open Shop",
+  "welcomeBack": "Welcome back 👋",
+  "welcome": "Welcome 👋",
+  "welcomeOpenSubtitle": "Your hygiene progress is being tracked while the shop is open.",
+  "welcomeClosedSubtitle": "Open your shop to begin tracking today’s hygiene progress.",
+  "activeTasks": "Active Tasks",
+  "todayTarget": "Today Target",
+  "consistency": "Consistency",
+  "performance": "Performance",
+  "openFor": "Open for",
+  "latestCustomer": "Latest customer",
+  "latestReview": "Latest review",
+  "noReviewsYet": "No reviews yet",
+  "noCustomerReviewMessage": "Customer reviews will appear here after customers scan your QR code and leave feedback.",
+  "today": "Today",
+  "vendorScore": "Vendor Score",
+  "vendorLevelLabel": "Vendor Level {level}",
+  "xpNeededToReachLevel": "{xp} XP needed to reach Level {level}.",
+  "strongHygiene": "Strong hygiene",
+  "improving": "Improving",
+  "needsAttention": "Needs attention",
+  "workingStreak": "{days}-day working streak",
+  "streakProtectedToday": "Streak protected today. Best: {bestStreak} days.",
+  "earnMoreXpToProtectStreak": "Earn {xp} more XP today to protect your streak.",
+  "reviewsCount": "{count} reviews",
+  "merchantTrustPass": "MERCHANT TRUST PASS",
+"scanToRateMe": "Scan to Rate Me",
+"scanToRateDescription": "Customers can scan this code to leave a hygiene rating and feedback.",
+"vendorReviewLink": "Vendor Review Link",
+"vendorIdLabel": "Vendor ID: {vendorId}",
+"copyReviewLink": "Copy Review Link",
+"reviewLinkCopied": "Review link copied",
+"reviewFlow": "Review Flow",
+"active": "Active",
+"customerForm": "Customer Form",
+"web": "Web",
+"howThisWorks": "How this works",
+"customerScansQr": "Customer scans the QR code.",
+"publicReviewFormOpens": "A public review form opens in the browser.",
+"customerLeavesRating": "Customer leaves a rating and short feedback.",
+"reviewUpdatesSummary": "The review updates this vendor’s rating summary.",
+"noVendorQrCodeYet": "No vendor QR code yet",
+"noVendorQrCodeDescription": "Register or sign in as a vendor first. After registration, Hygia will generate a unique review QR code for this vendor.",
+"refresh": "Refresh",
+"couldNotLoadVendorQrData": "Could not load vendor QR data.",
+"tryAgain": "Try Again"
+  "@vendorLevelLabel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@xpNeededToReachLevel": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      },
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@workingStreak": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@vendorIdLabel": {
+  "placeholders": {
+    "vendorId": {
+      "type": "String"
+    }
+  }
+},
+  "@streakProtectedToday": {
+    "placeholders": {
+      "bestStreak": {
+        "type": "int"
+      }
+    }
+  },
+  "@earnMoreXpToProtectStreak": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

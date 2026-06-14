@@ -106,4 +106,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vendorLead => 'Karim';
+
+  @override
+  String get homeTitle => 'My Home';
+
+  @override
+  String get shopOpen => 'Shop is open';
+
+  @override
+  String get shopClosed => 'Shop is closed';
+
+  @override
+  String get closeShop => 'Close Shop';
+
+  @override
+  String get openShop => 'Open Shop';
+
+  @override
+  String get welcomeBack => 'Welcome back 👋';
+
+  @override
+  String get welcome => 'Welcome 👋';
+
+  @override
+  String get welcomeOpenSubtitle =>
+      'Your hygiene progress is being tracked while the shop is open.';
+
+  @override
+  String get welcomeClosedSubtitle =>
+      'Open your shop to begin tracking today’s hygiene progress.';
+
+  @override
+  String get activeTasks => 'Active Tasks';
+
+  @override
+  String get todayTarget => 'Today Target';
+
+  @override
+  String get consistency => 'Consistency';
+
+  @override
+  String get performance => 'Performance';
+
+  @override
+  String get openFor => 'Open for';
+
+  @override
+  String get latestCustomer => 'Latest customer';
+
+  @override
+  String get latestReview => 'Latest review';
+
+  @override
+  String get noReviewsYet => 'No reviews yet';
+
+  @override
+  String get noCustomerReviewMessage =>
+      'Customer reviews will appear here after customers scan your QR code and leave feedback.';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get vendorScore => 'Vendor Score';
+
+  @override
+  String vendorLevelLabel(int level) {
+    return 'Vendor Level $level';
+  }
+
+  @override
+  String xpNeededToReachLevel(int xp, int level) {
+    return '$xp XP needed to reach Level $level.';
+  }
+
+  @override
+  String get strongHygiene => 'Strong hygiene';
+
+  @override
+  String get improving => 'Improving';
+
+  @override
+  String get needsAttention => 'Needs attention';
+
+  @override
+  String workingStreak(int days) {
+    return '$days-day working streak';
+  }
+
+  @override
+  String streakProtectedToday(int bestStreak) {
+    return 'Streak protected today. Best: $bestStreak days.';
+  }
+
+  @override
+  String earnMoreXpToProtectStreak(int xp) {
+    return 'Earn $xp more XP today to protect your streak.';
+  }
+
+  @override
+  String reviewsCount(int count) {
+    return '$count reviews';
+  }
 }

@@ -107,4 +107,106 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get vendorLead => 'করিম';
+
+  @override
+  String get homeTitle => 'আমার হোম';
+
+  @override
+  String get shopOpen => 'দোকান খোলা হয়েছে';
+
+  @override
+  String get shopClosed => 'দোকান বন্ধ হয়েছে';
+
+  @override
+  String get closeShop => 'দোকান বন্ধ করুন';
+
+  @override
+  String get openShop => 'দোকান খুলুন';
+
+  @override
+  String get welcomeBack => 'আবার স্বাগতম 👋';
+
+  @override
+  String get welcome => 'স্বাগতম 👋';
+
+  @override
+  String get welcomeOpenSubtitle =>
+      'দোকান খোলা থাকলে আপনার স্বাস্থ্যবিধির অগ্রগতি ট্র্যাক করা হবে।';
+
+  @override
+  String get welcomeClosedSubtitle =>
+      'আজকের স্বাস্থ্যবিধির অগ্রগতি শুরু করতে দোকান খুলুন।';
+
+  @override
+  String get activeTasks => 'সক্রিয় কাজ';
+
+  @override
+  String get todayTarget => 'আজকের লক্ষ্য';
+
+  @override
+  String get consistency => 'নিয়মিততা';
+
+  @override
+  String get performance => 'পারফরম্যান্স';
+
+  @override
+  String get openFor => 'খোলা আছে';
+
+  @override
+  String get latestCustomer => 'সর্বশেষ গ্রাহক';
+
+  @override
+  String get latestReview => 'সর্বশেষ রিভিউ';
+
+  @override
+  String get noReviewsYet => 'এখনও কোনো রিভিউ নেই';
+
+  @override
+  String get noCustomerReviewMessage =>
+      'গ্রাহকরা আপনার QR কোড স্ক্যান করে মতামত দিলে রিভিউ এখানে দেখা যাবে।';
+
+  @override
+  String get today => 'আজ';
+
+  @override
+  String get vendorScore => 'বিক্রেতার স্কোর';
+
+  @override
+  String vendorLevelLabel(int level) {
+    return 'বিক্রেতার লেভেল $level';
+  }
+
+  @override
+  String xpNeededToReachLevel(int xp, int level) {
+    return 'লেভেল $level-এ পৌঁছাতে আরও $xp XP প্রয়োজন।';
+  }
+
+  @override
+  String get strongHygiene => 'ভালো স্বাস্থ্যবিধি';
+
+  @override
+  String get improving => 'উন্নতি হচ্ছে';
+
+  @override
+  String get needsAttention => 'মনোযোগ প্রয়োজন';
+
+  @override
+  String workingStreak(int days) {
+    return '$days দিনের কাজের স্ট্রিক';
+  }
+
+  @override
+  String streakProtectedToday(int bestStreak) {
+    return 'আজ স্ট্রিক সুরক্ষিত। সেরা: $bestStreak দিন।';
+  }
+
+  @override
+  String earnMoreXpToProtectStreak(int xp) {
+    return 'স্ট্রিক সুরক্ষিত রাখতে আজ আরও $xp XP অর্জন করুন।';
+  }
+
+  @override
+  String reviewsCount(int count) {
+    return '$countটি রিভিউ';
+  }
 }

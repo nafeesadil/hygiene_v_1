@@ -297,6 +297,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Karim'**
   String get vendorLead;
+
+  /// No description provided for @homeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Home'**
+  String get homeTitle;
+
+  /// No description provided for @shopOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop is open'**
+  String get shopOpen;
+
+  /// No description provided for @shopClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop is closed'**
+  String get shopClosed;
+
+  /// No description provided for @closeShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Close Shop'**
+  String get closeShop;
+
+  /// No description provided for @openShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Shop'**
+  String get openShop;
+
+  /// No description provided for @welcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back 👋'**
+  String get welcomeBack;
+
+  /// No description provided for @welcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome 👋'**
+  String get welcome;
+
+  /// No description provided for @welcomeOpenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your hygiene progress is being tracked while the shop is open.'**
+  String get welcomeOpenSubtitle;
+
+  /// No description provided for @welcomeClosedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open your shop to begin tracking today’s hygiene progress.'**
+  String get welcomeClosedSubtitle;
+
+  /// No description provided for @activeTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Tasks'**
+  String get activeTasks;
+
+  /// No description provided for @todayTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Today Target'**
+  String get todayTarget;
+
+  /// No description provided for @consistency.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistency'**
+  String get consistency;
+
+  /// No description provided for @performance.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance'**
+  String get performance;
+
+  /// No description provided for @openFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Open for'**
+  String get openFor;
+
+  /// No description provided for @latestCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest customer'**
+  String get latestCustomer;
+
+  /// No description provided for @latestReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest review'**
+  String get latestReview;
+
+  /// No description provided for @noReviewsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get noReviewsYet;
+
+  /// No description provided for @noCustomerReviewMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer reviews will appear here after customers scan your QR code and leave feedback.'**
+  String get noCustomerReviewMessage;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @vendorScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Vendor Score'**
+  String get vendorScore;
+
+  /// No description provided for @vendorLevelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Vendor Level {level}'**
+  String vendorLevelLabel(int level);
+
+  /// No description provided for @xpNeededToReachLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'{xp} XP needed to reach Level {level}.'**
+  String xpNeededToReachLevel(int xp, int level);
+
+  /// No description provided for @strongHygiene.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong hygiene'**
+  String get strongHygiene;
+
+  /// No description provided for @improving.
+  ///
+  /// In en, this message translates to:
+  /// **'Improving'**
+  String get improving;
+
+  /// No description provided for @needsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs attention'**
+  String get needsAttention;
+
+  /// No description provided for @workingStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}-day working streak'**
+  String workingStreak(int days);
+
+  /// No description provided for @streakProtectedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak protected today. Best: {bestStreak} days.'**
+  String streakProtectedToday(int bestStreak);
+
+  /// No description provided for @earnMoreXpToProtectStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn {xp} more XP today to protect your streak.'**
+  String earnMoreXpToProtectStreak(int xp);
+
+  /// No description provided for @reviewsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reviews'**
+  String reviewsCount(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hygiene_v_1/core/widgets/hygia_dialogue.dart';
 import 'package:hygiene_v_1/features/shared/application/task_progress_service.dart';
 import 'package:hygiene_v_1/features/tasks/data/task_repository.dart';
-import 'package:hygiene_v_1/features/tasks/domain/built_in_tasks.dart';
 import 'package:hygiene_v_1/features/tasks/domain/task_definition.dart';
+import 'package:hygiene_v_1/features/tasks/presentation/pages/create_custom_task_page.dart';
 import 'package:hygiene_v_1/features/tasks/presentation/pages/task_detail_page.dart';
 import 'package:hygiene_v_1/features/vendor/data/vendor_repository.dart';
 import 'package:hygiene_v_1/features/vendor/domain/vendor_models.dart';
@@ -30,6 +30,7 @@ class _TasksPageState extends State<TasksPage> {
 
   int _tabIndex = 0;
   Set<String> _activeKeys = {};
+  List<TaskDefinition> _taskDefs = [];
   VendorDashboard? _dashboard;
   Timer? _ticker;
 
@@ -71,6 +72,7 @@ class _TasksPageState extends State<TasksPage> {
   }
 
   Future<void> _loadAll() async {
+    await _loadTaskDefinitions();
     await _refreshActive();
     await _loadCooldowns();
     await _loadDashboardOnly();
@@ -84,12 +86,32 @@ class _TasksPageState extends State<TasksPage> {
     });
   }
 
+  Future<void> _loadTaskDefinitions() async {
+    final defs = await _repo.getAllTaskDefinitions();
+    if (!mounted) return;
+    setState(() {
+      _taskDefs = defs;
+    });
+  }
+
   Future<void> _refreshActive() async {
     final active = await _repo.getActiveTasks();
     if (!mounted) return;
     setState(() {
       _activeKeys = active.map((e) => e.taskKey).toSet();
     });
+  }
+
+  Future<void> _openCreateTask() async {
+    final created = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const CreateCustomTaskPage()),
+    );
+
+    if (created == true) {
+      setState(() => _tabIndex = 1);
+      await _loadAll();
+    }
   }
 
   Future<void> _openDetail(TaskDefinition task) async {
@@ -203,8 +225,8 @@ class _TasksPageState extends State<TasksPage> {
     final dashboard = _dashboard;
 
     final tasks = _tabIndex == 0
-        ? builtInTasks.where((t) => _activeKeys.contains(t.id)).toList()
-        : builtInTasks;
+        ? _taskDefs.where((t) => _activeKeys.contains(t.id)).toList()
+        : _taskDefs;
 
     return Scaffold(
       body: SafeArea(
@@ -226,6 +248,12 @@ class _TasksPageState extends State<TasksPage> {
                       ),
                     ),
                     const Spacer(),
+                    IconButton.filledTonal(
+                      tooltip: 'Create Task',
+                      onPressed: _openCreateTask,
+                      icon: const Icon(Icons.add_rounded),
+                    ),
+                    const SizedBox(width: 8),
                     CircleAvatar(
                       radius: 18,
                       backgroundColor: theme.colorScheme.primary.withValues(
@@ -299,19 +327,7 @@ class _TasksPageState extends State<TasksPage> {
                   separatorBuilder: (_, _) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     if (_tabIndex == 0 && index == tasks.length) {
-                      return _SuggestCard(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => const HygiaDialog(
-                              title: 'Coming Soon',
-                              description:
-                                  'You will be able to suggest new hygiene tasks here.',
-                              primaryText: 'OK',
-                            ),
-                          );
-                        },
-                      );
+                      return _SuggestCard(onTap: _openCreateTask);
                     }
 
                     final task = tasks[index];
@@ -853,7 +869,7 @@ class _SuggestCard extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Suggest a new hygiene task',
+                  'Create a custom hygiene task',
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w800,
                   ),

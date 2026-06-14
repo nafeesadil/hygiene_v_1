@@ -471,6 +471,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} reviews'**
   String reviewsCount(int count);
+
+  /// No description provided for @merchantTrustPass.
+  ///
+  /// In en, this message translates to:
+  /// **'MERCHANT TRUST PASS'**
+  String get merchantTrustPass;
+
+  /// No description provided for @scanToRateMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan to Rate Me'**
+  String get scanToRateMe;
+
+  /// No description provided for @scanToRateDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers can scan this code to leave a hygiene rating and feedback.'**
+  String get scanToRateDescription;
+
+  /// No description provided for @vendorReviewLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Vendor Review Link'**
+  String get vendorReviewLink;
+
+  /// No description provided for @vendorIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Vendor ID: {vendorId}'**
+  String vendorIdLabel(String vendorId);
+
+  /// No description provided for @copyReviewLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Review Link'**
+  String get copyReviewLink;
+
+  /// No description provided for @reviewLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Review link copied'**
+  String get reviewLinkCopied;
+
+  /// No description provided for @reviewFlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Flow'**
+  String get reviewFlow;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @customerForm.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Form'**
+  String get customerForm;
+
+  /// No description provided for @web.
+  ///
+  /// In en, this message translates to:
+  /// **'Web'**
+  String get web;
+
+  /// No description provided for @howThisWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How this works'**
+  String get howThisWorks;
+
+  /// No description provided for @customerScansQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer scans the QR code.'**
+  String get customerScansQr;
+
+  /// No description provided for @publicReviewFormOpens.
+  ///
+  /// In en, this message translates to:
+  /// **'A public review form opens in the browser.'**
+  String get publicReviewFormOpens;
+
+  /// No description provided for @customerLeavesRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer leaves a rating and short feedback.'**
+  String get customerLeavesRating;
+
+  /// No description provided for @reviewUpdatesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'The review updates this vendor’s rating summary.'**
+  String get reviewUpdatesSummary;
+
+  /// No description provided for @noVendorQrCodeYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No vendor QR code yet'**
+  String get noVendorQrCodeYet;
+
+  /// No description provided for @noVendorQrCodeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Register or sign in as a vendor first. After registration, Hygia will generate a unique review QR code for this vendor.'**
+  String get noVendorQrCodeDescription;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @couldNotLoadVendorQrData.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load vendor QR data.'**
+  String get couldNotLoadVendorQrData;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
 }
 
 class _AppLocalizationsDelegate

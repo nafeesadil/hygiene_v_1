@@ -208,4 +208,75 @@ class AppLocalizationsDe extends AppLocalizations {
   String reviewsCount(int count) {
     return '$count Bewertungen';
   }
+
+  @override
+  String get merchantTrustPass => 'HÄNDLER-VERTRAUENSPASS';
+
+  @override
+  String get scanToRateMe => 'Scannen und bewerten';
+
+  @override
+  String get scanToRateDescription =>
+      'Kunden können diesen Code scannen, um eine Hygienebewertung und Feedback abzugeben.';
+
+  @override
+  String get vendorReviewLink => 'Bewertungslink des Anbieters';
+
+  @override
+  String vendorIdLabel(String vendorId) {
+    return 'Anbieter-ID: $vendorId';
+  }
+
+  @override
+  String get copyReviewLink => 'Bewertungslink kopieren';
+
+  @override
+  String get reviewLinkCopied => 'Bewertungslink kopiert';
+
+  @override
+  String get reviewFlow => 'Bewertungsablauf';
+
+  @override
+  String get active => 'Aktiv';
+
+  @override
+  String get customerForm => 'Kundenformular';
+
+  @override
+  String get web => 'Web';
+
+  @override
+  String get howThisWorks => 'So funktioniert es';
+
+  @override
+  String get customerScansQr => 'Der Kunde scannt den QR-Code.';
+
+  @override
+  String get publicReviewFormOpens =>
+      'Ein öffentliches Bewertungsformular öffnet sich im Browser.';
+
+  @override
+  String get customerLeavesRating =>
+      'Der Kunde gibt eine Bewertung und kurzes Feedback ab.';
+
+  @override
+  String get reviewUpdatesSummary =>
+      'Die Bewertung aktualisiert die Zusammenfassung dieses Anbieters.';
+
+  @override
+  String get noVendorQrCodeYet => 'Noch kein Anbieter-QR-Code';
+
+  @override
+  String get noVendorQrCodeDescription =>
+      'Registrieren Sie sich oder melden Sie sich zuerst als Anbieter an. Nach der Registrierung erstellt Hygia einen eindeutigen Bewertungs-QR-Code für diesen Anbieter.';
+
+  @override
+  String get refresh => 'Aktualisieren';
+
+  @override
+  String get couldNotLoadVendorQrData =>
+      'Anbieter-QR-Daten konnten nicht geladen werden.';
+
+  @override
+  String get tryAgain => 'Erneut versuchen';
 }

@@ -713,6 +713,751 @@ class TaskLogsCompanion extends UpdateCompanion<TaskLog> {
   }
 }
 
+class $CustomTaskDefinitionsTable extends CustomTaskDefinitions
+    with TableInfo<$CustomTaskDefinitionsTable, CustomTaskDefinition> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CustomTaskDefinitionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _shortDescriptionMeta = const VerificationMeta(
+    'shortDescription',
+  );
+  @override
+  late final GeneratedColumn<String> shortDescription = GeneratedColumn<String>(
+    'short_description',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _minGapMinutesMeta = const VerificationMeta(
+    'minGapMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> minGapMinutes = GeneratedColumn<int>(
+    'min_gap_minutes',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(15),
+  );
+  static const VerificationMeta _dailyCapMeta = const VerificationMeta(
+    'dailyCap',
+  );
+  @override
+  late final GeneratedColumn<int> dailyCap = GeneratedColumn<int>(
+    'daily_cap',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(12),
+  );
+  static const VerificationMeta _level1TargetMeta = const VerificationMeta(
+    'level1Target',
+  );
+  @override
+  late final GeneratedColumn<int> level1Target = GeneratedColumn<int>(
+    'level1_target',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _level2TargetMeta = const VerificationMeta(
+    'level2Target',
+  );
+  @override
+  late final GeneratedColumn<int> level2Target = GeneratedColumn<int>(
+    'level2_target',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _level3TargetMeta = const VerificationMeta(
+    'level3Target',
+  );
+  @override
+  late final GeneratedColumn<int> level3Target = GeneratedColumn<int>(
+    'level3_target',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _level4TargetMeta = const VerificationMeta(
+    'level4Target',
+  );
+  @override
+  late final GeneratedColumn<int> level4Target = GeneratedColumn<int>(
+    'level4_target',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _level5TargetMeta = const VerificationMeta(
+    'level5Target',
+  );
+  @override
+  late final GeneratedColumn<int> level5Target = GeneratedColumn<int>(
+    'level5_target',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMsMeta = const VerificationMeta(
+    'createdAtMs',
+  );
+  @override
+  late final GeneratedColumn<int> createdAtMs = GeneratedColumn<int>(
+    'created_at_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMsMeta = const VerificationMeta(
+    'updatedAtMs',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAtMs = GeneratedColumn<int>(
+    'updated_at_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    shortDescription,
+    minGapMinutes,
+    dailyCap,
+    level1Target,
+    level2Target,
+    level3Target,
+    level4Target,
+    level5Target,
+    createdAtMs,
+    updatedAtMs,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'custom_task_definitions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CustomTaskDefinition> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('short_description')) {
+      context.handle(
+        _shortDescriptionMeta,
+        shortDescription.isAcceptableOrUnknown(
+          data['short_description']!,
+          _shortDescriptionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_shortDescriptionMeta);
+    }
+    if (data.containsKey('min_gap_minutes')) {
+      context.handle(
+        _minGapMinutesMeta,
+        minGapMinutes.isAcceptableOrUnknown(
+          data['min_gap_minutes']!,
+          _minGapMinutesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('daily_cap')) {
+      context.handle(
+        _dailyCapMeta,
+        dailyCap.isAcceptableOrUnknown(data['daily_cap']!, _dailyCapMeta),
+      );
+    }
+    if (data.containsKey('level1_target')) {
+      context.handle(
+        _level1TargetMeta,
+        level1Target.isAcceptableOrUnknown(
+          data['level1_target']!,
+          _level1TargetMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_level1TargetMeta);
+    }
+    if (data.containsKey('level2_target')) {
+      context.handle(
+        _level2TargetMeta,
+        level2Target.isAcceptableOrUnknown(
+          data['level2_target']!,
+          _level2TargetMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_level2TargetMeta);
+    }
+    if (data.containsKey('level3_target')) {
+      context.handle(
+        _level3TargetMeta,
+        level3Target.isAcceptableOrUnknown(
+          data['level3_target']!,
+          _level3TargetMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_level3TargetMeta);
+    }
+    if (data.containsKey('level4_target')) {
+      context.handle(
+        _level4TargetMeta,
+        level4Target.isAcceptableOrUnknown(
+          data['level4_target']!,
+          _level4TargetMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_level4TargetMeta);
+    }
+    if (data.containsKey('level5_target')) {
+      context.handle(
+        _level5TargetMeta,
+        level5Target.isAcceptableOrUnknown(
+          data['level5_target']!,
+          _level5TargetMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_level5TargetMeta);
+    }
+    if (data.containsKey('created_at_ms')) {
+      context.handle(
+        _createdAtMsMeta,
+        createdAtMs.isAcceptableOrUnknown(
+          data['created_at_ms']!,
+          _createdAtMsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMsMeta);
+    }
+    if (data.containsKey('updated_at_ms')) {
+      context.handle(
+        _updatedAtMsMeta,
+        updatedAtMs.isAcceptableOrUnknown(
+          data['updated_at_ms']!,
+          _updatedAtMsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMsMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CustomTaskDefinition map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CustomTaskDefinition(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      shortDescription: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}short_description'],
+      )!,
+      minGapMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}min_gap_minutes'],
+      )!,
+      dailyCap: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}daily_cap'],
+      )!,
+      level1Target: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}level1_target'],
+      )!,
+      level2Target: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}level2_target'],
+      )!,
+      level3Target: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}level3_target'],
+      )!,
+      level4Target: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}level4_target'],
+      )!,
+      level5Target: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}level5_target'],
+      )!,
+      createdAtMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at_ms'],
+      )!,
+      updatedAtMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at_ms'],
+      )!,
+    );
+  }
+
+  @override
+  $CustomTaskDefinitionsTable createAlias(String alias) {
+    return $CustomTaskDefinitionsTable(attachedDatabase, alias);
+  }
+}
+
+class CustomTaskDefinition extends DataClass
+    implements Insertable<CustomTaskDefinition> {
+  final String id;
+  final String name;
+  final String shortDescription;
+  final int minGapMinutes;
+  final int dailyCap;
+  final int level1Target;
+  final int level2Target;
+  final int level3Target;
+  final int level4Target;
+  final int level5Target;
+  final int createdAtMs;
+  final int updatedAtMs;
+  const CustomTaskDefinition({
+    required this.id,
+    required this.name,
+    required this.shortDescription,
+    required this.minGapMinutes,
+    required this.dailyCap,
+    required this.level1Target,
+    required this.level2Target,
+    required this.level3Target,
+    required this.level4Target,
+    required this.level5Target,
+    required this.createdAtMs,
+    required this.updatedAtMs,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['short_description'] = Variable<String>(shortDescription);
+    map['min_gap_minutes'] = Variable<int>(minGapMinutes);
+    map['daily_cap'] = Variable<int>(dailyCap);
+    map['level1_target'] = Variable<int>(level1Target);
+    map['level2_target'] = Variable<int>(level2Target);
+    map['level3_target'] = Variable<int>(level3Target);
+    map['level4_target'] = Variable<int>(level4Target);
+    map['level5_target'] = Variable<int>(level5Target);
+    map['created_at_ms'] = Variable<int>(createdAtMs);
+    map['updated_at_ms'] = Variable<int>(updatedAtMs);
+    return map;
+  }
+
+  CustomTaskDefinitionsCompanion toCompanion(bool nullToAbsent) {
+    return CustomTaskDefinitionsCompanion(
+      id: Value(id),
+      name: Value(name),
+      shortDescription: Value(shortDescription),
+      minGapMinutes: Value(minGapMinutes),
+      dailyCap: Value(dailyCap),
+      level1Target: Value(level1Target),
+      level2Target: Value(level2Target),
+      level3Target: Value(level3Target),
+      level4Target: Value(level4Target),
+      level5Target: Value(level5Target),
+      createdAtMs: Value(createdAtMs),
+      updatedAtMs: Value(updatedAtMs),
+    );
+  }
+
+  factory CustomTaskDefinition.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CustomTaskDefinition(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      shortDescription: serializer.fromJson<String>(json['shortDescription']),
+      minGapMinutes: serializer.fromJson<int>(json['minGapMinutes']),
+      dailyCap: serializer.fromJson<int>(json['dailyCap']),
+      level1Target: serializer.fromJson<int>(json['level1Target']),
+      level2Target: serializer.fromJson<int>(json['level2Target']),
+      level3Target: serializer.fromJson<int>(json['level3Target']),
+      level4Target: serializer.fromJson<int>(json['level4Target']),
+      level5Target: serializer.fromJson<int>(json['level5Target']),
+      createdAtMs: serializer.fromJson<int>(json['createdAtMs']),
+      updatedAtMs: serializer.fromJson<int>(json['updatedAtMs']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'shortDescription': serializer.toJson<String>(shortDescription),
+      'minGapMinutes': serializer.toJson<int>(minGapMinutes),
+      'dailyCap': serializer.toJson<int>(dailyCap),
+      'level1Target': serializer.toJson<int>(level1Target),
+      'level2Target': serializer.toJson<int>(level2Target),
+      'level3Target': serializer.toJson<int>(level3Target),
+      'level4Target': serializer.toJson<int>(level4Target),
+      'level5Target': serializer.toJson<int>(level5Target),
+      'createdAtMs': serializer.toJson<int>(createdAtMs),
+      'updatedAtMs': serializer.toJson<int>(updatedAtMs),
+    };
+  }
+
+  CustomTaskDefinition copyWith({
+    String? id,
+    String? name,
+    String? shortDescription,
+    int? minGapMinutes,
+    int? dailyCap,
+    int? level1Target,
+    int? level2Target,
+    int? level3Target,
+    int? level4Target,
+    int? level5Target,
+    int? createdAtMs,
+    int? updatedAtMs,
+  }) => CustomTaskDefinition(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    shortDescription: shortDescription ?? this.shortDescription,
+    minGapMinutes: minGapMinutes ?? this.minGapMinutes,
+    dailyCap: dailyCap ?? this.dailyCap,
+    level1Target: level1Target ?? this.level1Target,
+    level2Target: level2Target ?? this.level2Target,
+    level3Target: level3Target ?? this.level3Target,
+    level4Target: level4Target ?? this.level4Target,
+    level5Target: level5Target ?? this.level5Target,
+    createdAtMs: createdAtMs ?? this.createdAtMs,
+    updatedAtMs: updatedAtMs ?? this.updatedAtMs,
+  );
+  CustomTaskDefinition copyWithCompanion(CustomTaskDefinitionsCompanion data) {
+    return CustomTaskDefinition(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      shortDescription: data.shortDescription.present
+          ? data.shortDescription.value
+          : this.shortDescription,
+      minGapMinutes: data.minGapMinutes.present
+          ? data.minGapMinutes.value
+          : this.minGapMinutes,
+      dailyCap: data.dailyCap.present ? data.dailyCap.value : this.dailyCap,
+      level1Target: data.level1Target.present
+          ? data.level1Target.value
+          : this.level1Target,
+      level2Target: data.level2Target.present
+          ? data.level2Target.value
+          : this.level2Target,
+      level3Target: data.level3Target.present
+          ? data.level3Target.value
+          : this.level3Target,
+      level4Target: data.level4Target.present
+          ? data.level4Target.value
+          : this.level4Target,
+      level5Target: data.level5Target.present
+          ? data.level5Target.value
+          : this.level5Target,
+      createdAtMs: data.createdAtMs.present
+          ? data.createdAtMs.value
+          : this.createdAtMs,
+      updatedAtMs: data.updatedAtMs.present
+          ? data.updatedAtMs.value
+          : this.updatedAtMs,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CustomTaskDefinition(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('shortDescription: $shortDescription, ')
+          ..write('minGapMinutes: $minGapMinutes, ')
+          ..write('dailyCap: $dailyCap, ')
+          ..write('level1Target: $level1Target, ')
+          ..write('level2Target: $level2Target, ')
+          ..write('level3Target: $level3Target, ')
+          ..write('level4Target: $level4Target, ')
+          ..write('level5Target: $level5Target, ')
+          ..write('createdAtMs: $createdAtMs, ')
+          ..write('updatedAtMs: $updatedAtMs')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    shortDescription,
+    minGapMinutes,
+    dailyCap,
+    level1Target,
+    level2Target,
+    level3Target,
+    level4Target,
+    level5Target,
+    createdAtMs,
+    updatedAtMs,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CustomTaskDefinition &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.shortDescription == this.shortDescription &&
+          other.minGapMinutes == this.minGapMinutes &&
+          other.dailyCap == this.dailyCap &&
+          other.level1Target == this.level1Target &&
+          other.level2Target == this.level2Target &&
+          other.level3Target == this.level3Target &&
+          other.level4Target == this.level4Target &&
+          other.level5Target == this.level5Target &&
+          other.createdAtMs == this.createdAtMs &&
+          other.updatedAtMs == this.updatedAtMs);
+}
+
+class CustomTaskDefinitionsCompanion
+    extends UpdateCompanion<CustomTaskDefinition> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> shortDescription;
+  final Value<int> minGapMinutes;
+  final Value<int> dailyCap;
+  final Value<int> level1Target;
+  final Value<int> level2Target;
+  final Value<int> level3Target;
+  final Value<int> level4Target;
+  final Value<int> level5Target;
+  final Value<int> createdAtMs;
+  final Value<int> updatedAtMs;
+  final Value<int> rowid;
+  const CustomTaskDefinitionsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.shortDescription = const Value.absent(),
+    this.minGapMinutes = const Value.absent(),
+    this.dailyCap = const Value.absent(),
+    this.level1Target = const Value.absent(),
+    this.level2Target = const Value.absent(),
+    this.level3Target = const Value.absent(),
+    this.level4Target = const Value.absent(),
+    this.level5Target = const Value.absent(),
+    this.createdAtMs = const Value.absent(),
+    this.updatedAtMs = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CustomTaskDefinitionsCompanion.insert({
+    required String id,
+    required String name,
+    required String shortDescription,
+    this.minGapMinutes = const Value.absent(),
+    this.dailyCap = const Value.absent(),
+    required int level1Target,
+    required int level2Target,
+    required int level3Target,
+    required int level4Target,
+    required int level5Target,
+    required int createdAtMs,
+    required int updatedAtMs,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       shortDescription = Value(shortDescription),
+       level1Target = Value(level1Target),
+       level2Target = Value(level2Target),
+       level3Target = Value(level3Target),
+       level4Target = Value(level4Target),
+       level5Target = Value(level5Target),
+       createdAtMs = Value(createdAtMs),
+       updatedAtMs = Value(updatedAtMs);
+  static Insertable<CustomTaskDefinition> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? shortDescription,
+    Expression<int>? minGapMinutes,
+    Expression<int>? dailyCap,
+    Expression<int>? level1Target,
+    Expression<int>? level2Target,
+    Expression<int>? level3Target,
+    Expression<int>? level4Target,
+    Expression<int>? level5Target,
+    Expression<int>? createdAtMs,
+    Expression<int>? updatedAtMs,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (shortDescription != null) 'short_description': shortDescription,
+      if (minGapMinutes != null) 'min_gap_minutes': minGapMinutes,
+      if (dailyCap != null) 'daily_cap': dailyCap,
+      if (level1Target != null) 'level1_target': level1Target,
+      if (level2Target != null) 'level2_target': level2Target,
+      if (level3Target != null) 'level3_target': level3Target,
+      if (level4Target != null) 'level4_target': level4Target,
+      if (level5Target != null) 'level5_target': level5Target,
+      if (createdAtMs != null) 'created_at_ms': createdAtMs,
+      if (updatedAtMs != null) 'updated_at_ms': updatedAtMs,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CustomTaskDefinitionsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? shortDescription,
+    Value<int>? minGapMinutes,
+    Value<int>? dailyCap,
+    Value<int>? level1Target,
+    Value<int>? level2Target,
+    Value<int>? level3Target,
+    Value<int>? level4Target,
+    Value<int>? level5Target,
+    Value<int>? createdAtMs,
+    Value<int>? updatedAtMs,
+    Value<int>? rowid,
+  }) {
+    return CustomTaskDefinitionsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      shortDescription: shortDescription ?? this.shortDescription,
+      minGapMinutes: minGapMinutes ?? this.minGapMinutes,
+      dailyCap: dailyCap ?? this.dailyCap,
+      level1Target: level1Target ?? this.level1Target,
+      level2Target: level2Target ?? this.level2Target,
+      level3Target: level3Target ?? this.level3Target,
+      level4Target: level4Target ?? this.level4Target,
+      level5Target: level5Target ?? this.level5Target,
+      createdAtMs: createdAtMs ?? this.createdAtMs,
+      updatedAtMs: updatedAtMs ?? this.updatedAtMs,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (shortDescription.present) {
+      map['short_description'] = Variable<String>(shortDescription.value);
+    }
+    if (minGapMinutes.present) {
+      map['min_gap_minutes'] = Variable<int>(minGapMinutes.value);
+    }
+    if (dailyCap.present) {
+      map['daily_cap'] = Variable<int>(dailyCap.value);
+    }
+    if (level1Target.present) {
+      map['level1_target'] = Variable<int>(level1Target.value);
+    }
+    if (level2Target.present) {
+      map['level2_target'] = Variable<int>(level2Target.value);
+    }
+    if (level3Target.present) {
+      map['level3_target'] = Variable<int>(level3Target.value);
+    }
+    if (level4Target.present) {
+      map['level4_target'] = Variable<int>(level4Target.value);
+    }
+    if (level5Target.present) {
+      map['level5_target'] = Variable<int>(level5Target.value);
+    }
+    if (createdAtMs.present) {
+      map['created_at_ms'] = Variable<int>(createdAtMs.value);
+    }
+    if (updatedAtMs.present) {
+      map['updated_at_ms'] = Variable<int>(updatedAtMs.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CustomTaskDefinitionsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('shortDescription: $shortDescription, ')
+          ..write('minGapMinutes: $minGapMinutes, ')
+          ..write('dailyCap: $dailyCap, ')
+          ..write('level1Target: $level1Target, ')
+          ..write('level2Target: $level2Target, ')
+          ..write('level3Target: $level3Target, ')
+          ..write('level4Target: $level4Target, ')
+          ..write('level5Target: $level5Target, ')
+          ..write('createdAtMs: $createdAtMs, ')
+          ..write('updatedAtMs: $updatedAtMs, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ShopStateTable extends ShopState
     with TableInfo<$ShopStateTable, ShopStateData> {
   @override
@@ -3731,6 +4476,8 @@ abstract class _$AppDb extends GeneratedDatabase {
   $AppDbManager get managers => $AppDbManager(this);
   late final $TasksTable tasks = $TasksTable(this);
   late final $TaskLogsTable taskLogs = $TaskLogsTable(this);
+  late final $CustomTaskDefinitionsTable customTaskDefinitions =
+      $CustomTaskDefinitionsTable(this);
   late final $ShopStateTable shopState = $ShopStateTable(this);
   late final $VendorStateTable vendorState = $VendorStateTable(this);
   late final $VendorDailyStatsTable vendorDailyStats = $VendorDailyStatsTable(
@@ -3746,6 +4493,7 @@ abstract class _$AppDb extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     tasks,
     taskLogs,
+    customTaskDefinitions,
     shopState,
     vendorState,
     vendorDailyStats,
@@ -4130,6 +4878,376 @@ typedef $$TaskLogsTableProcessedTableManager =
       $$TaskLogsTableUpdateCompanionBuilder,
       (TaskLog, BaseReferences<_$AppDb, $TaskLogsTable, TaskLog>),
       TaskLog,
+      PrefetchHooks Function()
+    >;
+typedef $$CustomTaskDefinitionsTableCreateCompanionBuilder =
+    CustomTaskDefinitionsCompanion Function({
+      required String id,
+      required String name,
+      required String shortDescription,
+      Value<int> minGapMinutes,
+      Value<int> dailyCap,
+      required int level1Target,
+      required int level2Target,
+      required int level3Target,
+      required int level4Target,
+      required int level5Target,
+      required int createdAtMs,
+      required int updatedAtMs,
+      Value<int> rowid,
+    });
+typedef $$CustomTaskDefinitionsTableUpdateCompanionBuilder =
+    CustomTaskDefinitionsCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> shortDescription,
+      Value<int> minGapMinutes,
+      Value<int> dailyCap,
+      Value<int> level1Target,
+      Value<int> level2Target,
+      Value<int> level3Target,
+      Value<int> level4Target,
+      Value<int> level5Target,
+      Value<int> createdAtMs,
+      Value<int> updatedAtMs,
+      Value<int> rowid,
+    });
+
+class $$CustomTaskDefinitionsTableFilterComposer
+    extends Composer<_$AppDb, $CustomTaskDefinitionsTable> {
+  $$CustomTaskDefinitionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get shortDescription => $composableBuilder(
+    column: $table.shortDescription,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get minGapMinutes => $composableBuilder(
+    column: $table.minGapMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get dailyCap => $composableBuilder(
+    column: $table.dailyCap,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get level1Target => $composableBuilder(
+    column: $table.level1Target,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get level2Target => $composableBuilder(
+    column: $table.level2Target,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get level3Target => $composableBuilder(
+    column: $table.level3Target,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get level4Target => $composableBuilder(
+    column: $table.level4Target,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get level5Target => $composableBuilder(
+    column: $table.level5Target,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAtMs => $composableBuilder(
+    column: $table.createdAtMs,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CustomTaskDefinitionsTableOrderingComposer
+    extends Composer<_$AppDb, $CustomTaskDefinitionsTable> {
+  $$CustomTaskDefinitionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get shortDescription => $composableBuilder(
+    column: $table.shortDescription,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get minGapMinutes => $composableBuilder(
+    column: $table.minGapMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get dailyCap => $composableBuilder(
+    column: $table.dailyCap,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get level1Target => $composableBuilder(
+    column: $table.level1Target,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get level2Target => $composableBuilder(
+    column: $table.level2Target,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get level3Target => $composableBuilder(
+    column: $table.level3Target,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get level4Target => $composableBuilder(
+    column: $table.level4Target,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get level5Target => $composableBuilder(
+    column: $table.level5Target,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAtMs => $composableBuilder(
+    column: $table.createdAtMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CustomTaskDefinitionsTableAnnotationComposer
+    extends Composer<_$AppDb, $CustomTaskDefinitionsTable> {
+  $$CustomTaskDefinitionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get shortDescription => $composableBuilder(
+    column: $table.shortDescription,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get minGapMinutes => $composableBuilder(
+    column: $table.minGapMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get dailyCap =>
+      $composableBuilder(column: $table.dailyCap, builder: (column) => column);
+
+  GeneratedColumn<int> get level1Target => $composableBuilder(
+    column: $table.level1Target,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get level2Target => $composableBuilder(
+    column: $table.level2Target,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get level3Target => $composableBuilder(
+    column: $table.level3Target,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get level4Target => $composableBuilder(
+    column: $table.level4Target,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get level5Target => $composableBuilder(
+    column: $table.level5Target,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAtMs => $composableBuilder(
+    column: $table.createdAtMs,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get updatedAtMs => $composableBuilder(
+    column: $table.updatedAtMs,
+    builder: (column) => column,
+  );
+}
+
+class $$CustomTaskDefinitionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDb,
+          $CustomTaskDefinitionsTable,
+          CustomTaskDefinition,
+          $$CustomTaskDefinitionsTableFilterComposer,
+          $$CustomTaskDefinitionsTableOrderingComposer,
+          $$CustomTaskDefinitionsTableAnnotationComposer,
+          $$CustomTaskDefinitionsTableCreateCompanionBuilder,
+          $$CustomTaskDefinitionsTableUpdateCompanionBuilder,
+          (
+            CustomTaskDefinition,
+            BaseReferences<
+              _$AppDb,
+              $CustomTaskDefinitionsTable,
+              CustomTaskDefinition
+            >,
+          ),
+          CustomTaskDefinition,
+          PrefetchHooks Function()
+        > {
+  $$CustomTaskDefinitionsTableTableManager(
+    _$AppDb db,
+    $CustomTaskDefinitionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CustomTaskDefinitionsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$CustomTaskDefinitionsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$CustomTaskDefinitionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> shortDescription = const Value.absent(),
+                Value<int> minGapMinutes = const Value.absent(),
+                Value<int> dailyCap = const Value.absent(),
+                Value<int> level1Target = const Value.absent(),
+                Value<int> level2Target = const Value.absent(),
+                Value<int> level3Target = const Value.absent(),
+                Value<int> level4Target = const Value.absent(),
+                Value<int> level5Target = const Value.absent(),
+                Value<int> createdAtMs = const Value.absent(),
+                Value<int> updatedAtMs = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CustomTaskDefinitionsCompanion(
+                id: id,
+                name: name,
+                shortDescription: shortDescription,
+                minGapMinutes: minGapMinutes,
+                dailyCap: dailyCap,
+                level1Target: level1Target,
+                level2Target: level2Target,
+                level3Target: level3Target,
+                level4Target: level4Target,
+                level5Target: level5Target,
+                createdAtMs: createdAtMs,
+                updatedAtMs: updatedAtMs,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                required String shortDescription,
+                Value<int> minGapMinutes = const Value.absent(),
+                Value<int> dailyCap = const Value.absent(),
+                required int level1Target,
+                required int level2Target,
+                required int level3Target,
+                required int level4Target,
+                required int level5Target,
+                required int createdAtMs,
+                required int updatedAtMs,
+                Value<int> rowid = const Value.absent(),
+              }) => CustomTaskDefinitionsCompanion.insert(
+                id: id,
+                name: name,
+                shortDescription: shortDescription,
+                minGapMinutes: minGapMinutes,
+                dailyCap: dailyCap,
+                level1Target: level1Target,
+                level2Target: level2Target,
+                level3Target: level3Target,
+                level4Target: level4Target,
+                level5Target: level5Target,
+                createdAtMs: createdAtMs,
+                updatedAtMs: updatedAtMs,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CustomTaskDefinitionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDb,
+      $CustomTaskDefinitionsTable,
+      CustomTaskDefinition,
+      $$CustomTaskDefinitionsTableFilterComposer,
+      $$CustomTaskDefinitionsTableOrderingComposer,
+      $$CustomTaskDefinitionsTableAnnotationComposer,
+      $$CustomTaskDefinitionsTableCreateCompanionBuilder,
+      $$CustomTaskDefinitionsTableUpdateCompanionBuilder,
+      (
+        CustomTaskDefinition,
+        BaseReferences<
+          _$AppDb,
+          $CustomTaskDefinitionsTable,
+          CustomTaskDefinition
+        >,
+      ),
+      CustomTaskDefinition,
       PrefetchHooks Function()
     >;
 typedef $$ShopStateTableCreateCompanionBuilder =
@@ -5625,6 +6743,8 @@ class $AppDbManager {
       $$TasksTableTableManager(_db, _db.tasks);
   $$TaskLogsTableTableManager get taskLogs =>
       $$TaskLogsTableTableManager(_db, _db.taskLogs);
+  $$CustomTaskDefinitionsTableTableManager get customTaskDefinitions =>
+      $$CustomTaskDefinitionsTableTableManager(_db, _db.customTaskDefinitions);
   $$ShopStateTableTableManager get shopState =>
       $$ShopStateTableTableManager(_db, _db.shopState);
   $$VendorStateTableTableManager get vendorState =>

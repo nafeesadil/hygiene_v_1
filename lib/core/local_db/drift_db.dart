@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../features/tasks/data/drift/tasks_tables.dart';
 import '../../features/tasks/data/drift/shop_state_table.dart';
+import '../../features/tasks/data/drift/custom_task_definitions_table.dart';
 import 'package:hygiene_v_1/features/vendor/data/drift/vendor_daily_stats_table.dart';
 import 'package:hygiene_v_1/features/vendor/data/drift/vendor_state_table.dart';
 import 'package:hygiene_v_1/features/vendor/data/drift/local_vendor_profile.dart';
@@ -15,6 +16,7 @@ part 'drift_db.g.dart';
   tables: [
     Tasks,
     TaskLogs,
+    CustomTaskDefinitions,
     ShopState,
     VendorState,
     VendorDailyStats,
@@ -26,7 +28,17 @@ class AppDb extends _$AppDb {
   AppDb() : super(_openConnection());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) => m.createAll(),
+        onUpgrade: (m, from, to) async {
+          if (from < 7) {
+            await m.createTable(customTaskDefinitions);
+          }
+        },
+      );
 }
 
 LazyDatabase _openConnection() {

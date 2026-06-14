@@ -81,7 +81,7 @@
 "noVendorQrCodeDescription": "Register or sign in as a vendor first. After registration, Hygia will generate a unique review QR code for this vendor.",
 "refresh": "Refresh",
 "couldNotLoadVendorQrData": "Could not load vendor QR data.",
-"tryAgain": "Try Again"
+"tryAgain": "Try Again",
   "@vendorLevelLabel": {
     "placeholders": {
       "level": {

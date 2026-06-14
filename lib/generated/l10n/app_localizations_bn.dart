@@ -209,4 +209,72 @@ class AppLocalizationsBn extends AppLocalizations {
   String reviewsCount(int count) {
     return '$countটি রিভিউ';
   }
+
+  @override
+  String get merchantTrustPass => 'বিক্রেতার ট্রাস্ট পাস';
+
+  @override
+  String get scanToRateMe => 'স্ক্যান করে রেট দিন';
+
+  @override
+  String get scanToRateDescription =>
+      'গ্রাহকরা এই কোড স্ক্যান করে স্বাস্থ্যবিধি রেটিং ও মতামত দিতে পারবেন।';
+
+  @override
+  String get vendorReviewLink => 'বিক্রেতার রিভিউ লিংক';
+
+  @override
+  String vendorIdLabel(String vendorId) {
+    return 'বিক্রেতা আইডি: $vendorId';
+  }
+
+  @override
+  String get copyReviewLink => 'রিভিউ লিংক কপি করুন';
+
+  @override
+  String get reviewLinkCopied => 'রিভিউ লিংক কপি হয়েছে';
+
+  @override
+  String get reviewFlow => 'রিভিউ প্রক্রিয়া';
+
+  @override
+  String get active => 'সক্রিয়';
+
+  @override
+  String get customerForm => 'গ্রাহক ফর্ম';
+
+  @override
+  String get web => 'ওয়েব';
+
+  @override
+  String get howThisWorks => 'এটি কীভাবে কাজ করে';
+
+  @override
+  String get customerScansQr => 'গ্রাহক QR কোড স্ক্যান করেন।';
+
+  @override
+  String get publicReviewFormOpens => 'ব্রাউজারে একটি পাবলিক রিভিউ ফর্ম খুলবে।';
+
+  @override
+  String get customerLeavesRating => 'গ্রাহক রেটিং ও ছোট মতামত দেন।';
+
+  @override
+  String get reviewUpdatesSummary =>
+      'রিভিউটি এই বিক্রেতার রেটিং সারাংশ আপডেট করে।';
+
+  @override
+  String get noVendorQrCodeYet => 'এখনো কোনো বিক্রেতা QR কোড নেই';
+
+  @override
+  String get noVendorQrCodeDescription =>
+      'প্রথমে বিক্রেতা হিসেবে নিবন্ধন করুন বা সাইন ইন করুন। নিবন্ধনের পর Hygia এই বিক্রেতার জন্য একটি ইউনিক রিভিউ QR কোড তৈরি করবে।';
+
+  @override
+  String get refresh => 'রিফ্রেশ';
+
+  @override
+  String get couldNotLoadVendorQrData => 'বিক্রেতার QR ডেটা লোড করা যায়নি।';
+
+  @override
+  String get tryAgain => 'আবার চেষ্টা করুন';
 }

@@ -208,4 +208,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String reviewsCount(int count) {
     return '$count reviews';
   }
+
+  @override
+  String get merchantTrustPass => 'MERCHANT TRUST PASS';
+
+  @override
+  String get scanToRateMe => 'Scan to Rate Me';
+
+  @override
+  String get scanToRateDescription =>
+      'Customers can scan this code to leave a hygiene rating and feedback.';
+
+  @override
+  String get vendorReviewLink => 'Vendor Review Link';
+
+  @override
+  String vendorIdLabel(String vendorId) {
+    return 'Vendor ID: $vendorId';
+  }
+
+  @override
+  String get copyReviewLink => 'Copy Review Link';
+
+  @override
+  String get reviewLinkCopied => 'Review link copied';
+
+  @override
+  String get reviewFlow => 'Review Flow';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get customerForm => 'Customer Form';
+
+  @override
+  String get web => 'Web';
+
+  @override
+  String get howThisWorks => 'How this works';
+
+  @override
+  String get customerScansQr => 'Customer scans the QR code.';
+
+  @override
+  String get publicReviewFormOpens =>
+      'A public review form opens in the browser.';
+
+  @override
+  String get customerLeavesRating =>
+      'Customer leaves a rating and short feedback.';
+
+  @override
+  String get reviewUpdatesSummary =>
+      'The review updates this vendor’s rating summary.';
+
+  @override
+  String get noVendorQrCodeYet => 'No vendor QR code yet';
+
+  @override
+  String get noVendorQrCodeDescription =>
+      'Register or sign in as a vendor first. After registration, Hygia will generate a unique review QR code for this vendor.';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get couldNotLoadVendorQrData => 'Could not load vendor QR data.';
+
+  @override
+  String get tryAgain => 'Try Again';
 }

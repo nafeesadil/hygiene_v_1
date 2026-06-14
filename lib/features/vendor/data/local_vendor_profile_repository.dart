@@ -88,4 +88,26 @@ class LocalVendorProfileRepository {
   Future<void> clearLocalProfile() async {
     await _db.delete(_db.localVendorProfiles).go();
   }
+
+  Future<void> clearLocalUserDataOnSignOut() async {
+    await _db.transaction(() async {
+      // Delete progress/history first.
+      await _db.delete(_db.taskLogs).go();
+
+      // Delete task activation, task levels, last done time, and custom tasks.
+      await _db.delete(_db.tasks).go();
+      await _db.delete(_db.customTaskDefinitions).go();
+
+      // Delete shop open/close state.
+      await _db.delete(_db.shopState).go();
+
+      // Delete vendor XP, level, streak, score, and daily stats.
+      await _db.delete(_db.vendorDailyStats).go();
+      await _db.delete(_db.vendorState).go();
+
+      // Delete cached vendor profile and pending sync queue.
+      await _db.delete(_db.localVendorProfiles).go();
+      await _db.delete(_db.syncQueue).go();
+    });
+  }
 }

@@ -56,9 +56,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     if (shouldSignOut != true) return;
-
+    await _localVendorProfileRepo.clearLocalUserDataOnSignOut();
     await FirebaseAuth.instance.signOut();
-    await _localVendorProfileRepo.clearLocalProfile();
 
     if (!mounted) return;
 

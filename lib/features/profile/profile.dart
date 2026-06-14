@@ -6,6 +6,8 @@ import 'package:hygiene_v_1/main.dart' show appDb, appSettings;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hygiene_v_1/features/auth/presentation/auth_gate.dart';
 import 'package:hygiene_v_1/features/vendor/data/local_vendor_profile_repository.dart';
+import 'package:hygiene_v_1/core/local_db/drift_db.dart'
+    show LocalVendorProfile;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -19,17 +21,24 @@ class _ProfilePageState extends State<ProfilePage> {
   final LocalVendorProfileRepository _localVendorProfileRepo =
       LocalVendorProfileRepository(appDb);
   VendorDashboard? _dashboard;
+  LocalVendorProfile? _localVendorProfile;
 
   @override
   void initState() {
     super.initState();
-    _loadDashboard();
+    _loadAll();
   }
 
-  Future<void> _loadDashboard() async {
+  Future<void> _loadAll() async {
     final dashboard = await _vendorRepo.getDashboard();
+    final localProfile = await _localVendorProfileRepo.getLocalProfile();
+
     if (!mounted) return;
-    setState(() => _dashboard = dashboard);
+
+    setState(() {
+      _dashboard = dashboard;
+      _localVendorProfile = localProfile;
+    });
   }
 
   Future<void> _signOut() async {
@@ -129,11 +138,24 @@ class _ProfilePageState extends State<ProfilePage> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final dashboard = _dashboard;
+    final localProfile = _localVendorProfile;
+
+    final profileCategory = localProfile?.foodCategory.trim().isNotEmpty == true
+        ? localProfile!.foodCategory.trim()
+        : l10n.vendorCategory;
+
+    final profileShopName = localProfile?.shopName.trim().isNotEmpty == true
+        ? localProfile!.shopName.trim()
+        : l10n.vendorName;
+
+    final profileLeadVendor = localProfile?.vendorName.trim().isNotEmpty == true
+        ? localProfile!.vendorName.trim()
+        : l10n.vendorLead;
 
     return Scaffold(
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: _loadDashboard,
+          onRefresh: _loadAll,
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 18, 20, 30),
             children: [
@@ -160,9 +182,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 22),
               _VendorHeader(
-                category: l10n.vendorCategory,
-                vendorName: l10n.vendorName,
-                leadVendor: l10n.vendorLead,
+                category: profileCategory,
+                vendorName: profileShopName,
+                leadVendor: profileLeadVendor,
               ),
               const SizedBox(height: 22),
               if (dashboard == null)

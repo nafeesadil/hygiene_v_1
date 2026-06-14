@@ -106,4 +106,33 @@ class AuthRepository {
 
     return AppUser.fromMap(doc.data()!);
   }
+
+  Future<VendorProfileModel?> getCurrentVendorProfile() async {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+
+    final doc = await _firestore.collection('vendors').doc(user.uid).get();
+
+    if (!doc.exists || doc.data() == null) return null;
+
+    final data = doc.data()!;
+
+    return VendorProfileModel(
+      vendorId: data['vendorId'] as String? ?? user.uid,
+      ownerUid: data['ownerUid'] as String? ?? user.uid,
+      vendorName: data['vendorName'] as String? ?? '',
+      shopName: data['shopName'] as String? ?? '',
+      foodCategory: data['foodCategory'] as String? ?? '',
+      description: data['description'] as String? ?? '',
+      phoneNumber: data['phoneNumber'] as String? ?? '',
+      locationText: data['locationText'] as String? ?? '',
+      city: data['city'] as String? ?? '',
+      country: data['country'] as String? ?? 'Bangladesh',
+      preferredLanguage: data['preferredLanguage'] as String? ?? 'en',
+      profileImageUrl: data['profileImageUrl'] as String?,
+      reviewUrl:
+          data['reviewUrl'] as String? ??
+          'https://hygia-9f3bd.web.app/review.html?vendorId=${user.uid}',
+    );
+  }
 }

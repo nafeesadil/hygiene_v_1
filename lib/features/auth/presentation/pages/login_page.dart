@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hygiene_v_1/features/auth/data/auth_repository.dart';
 import 'package:hygiene_v_1/features/auth/presentation/pages/vendor_registration_page.dart';
+import 'package:hygiene_v_1/features/vendor/data/local_vendor_profile_repository.dart';
+import 'package:hygiene_v_1/main.dart' show appDb;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,7 +13,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _authRepo = AuthRepository();
-
+  final _localVendorRepo = LocalVendorProfileRepository(appDb);
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
 
@@ -34,6 +36,12 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailCtrl.text.trim(),
         password: _passwordCtrl.text,
       );
+
+      final vendorProfile = await _authRepo.getCurrentVendorProfile();
+
+      if (vendorProfile != null) {
+        await _localVendorRepo.saveProfile(vendorProfile);
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -188,9 +196,7 @@ class _AuthBackgroundDecor extends StatelessWidget {
 
     return Positioned.fill(
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: theme.scaffoldBackgroundColor,
-        ),
+        decoration: BoxDecoration(color: theme.scaffoldBackgroundColor),
         child: Stack(
           children: [
             Positioned(
@@ -198,7 +204,9 @@ class _AuthBackgroundDecor extends StatelessWidget {
               left: -80,
               child: _BlurCircle(
                 size: 210,
-                color: theme.colorScheme.primaryContainer.withValues(alpha: 0.55),
+                color: theme.colorScheme.primaryContainer.withValues(
+                  alpha: 0.55,
+                ),
               ),
             ),
             Positioned(
@@ -214,7 +222,9 @@ class _AuthBackgroundDecor extends StatelessWidget {
               left: -35,
               child: _BlurCircle(
                 size: 260,
-                color: theme.colorScheme.primaryContainer.withValues(alpha: 0.38),
+                color: theme.colorScheme.primaryContainer.withValues(
+                  alpha: 0.38,
+                ),
               ),
             ),
           ],
@@ -366,7 +376,10 @@ class _AuthTextField extends StatelessWidget {
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: theme.colorScheme.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 17,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(

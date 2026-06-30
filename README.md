@@ -112,8 +112,9 @@ dart pub global activate flutterfire_cli
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/hygia.git
-cd hygia
+git clone git clone https://github.com/nafeesadil/hygiene_v_1.git
+cd hygiene_v_1
+
 ```
 
 Replace `YOUR_USERNAME` with your GitHub username.

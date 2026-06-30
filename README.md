@@ -9,7 +9,7 @@ The project was developed as part of a Master's thesis on using mobile persuasiv
 ## Preview
 
 <p align="center">
-  <img src="assets/readme/hoome.png" width="220" alt="Hygia Home Screen"/>
+  <img src="assets/readme/home.png" width="220" alt="Hygia Home Screen"/>
   <img src="assets/readme/tasks.png" width="220" alt="Hygia Tasks Screen"/>
   <img src="assets/readme/qr.png" width="220" alt="Hygia Profile Screen"/>
   <img src="assets/readme/profile.png" width="220" alt="Hygia QR Screen"/>

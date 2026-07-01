@@ -4,7 +4,10 @@
 
 The project was developed as part of a Master's thesis on using mobile persuasive technology to encourage hygiene-related behaviour change among street food vendors in Bangladesh. Hygia helps vendors track daily hygiene tasks, earn XP, improve their vendor score, maintain streaks, and share a QR-based trust/rating profile with customers.
 
+📄 **Thesis Report:** [Read the full thesis report](assets/readme/Thesis%20Report%20Nafees%20Mohammad%20Adil.pdf)
+
 ---
+
 
 ## Preview
 
